@@ -10,7 +10,7 @@
     <p style="font-size:64px;font-weight:800;color:var(--color-primary);line-height:1" th:text="${status ?: '오류'}">404</p>
     <h2 style="margin-top:16px">페이지를 표시할 수 없어요</h2>
     <p style="margin-top:8px;color:var(--color-text-sub)" th:text="${message ?: '요청을 처리하지 못했습니다.'}">요청을 처리하지 못했습니다.</p>
-    <a class="btn btn-primary" style="margin-top:32px" th:href="@{/main}">홈으로 가기</a>
+    <a class="btn btn-primary" style="margin-top:32px" th:href="@{/}">홈으로 가기</a>
 </main>
 <footer th:replace="~{include/footer :: footer}"></footer>
 </body>

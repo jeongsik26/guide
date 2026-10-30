@@ -4,11 +4,11 @@
 <!-- 공통 헤더: th:replace="~{include/header :: header('home' | 'community' | 'chat' | '')}" -->
 <header class="site-header" th:fragment="header(menu)">
     <div class="inner">
-        <a class="logo" th:href="@{/main}">
+        <a class="logo" th:href="@{/}">
             <img th:src="@{/image/logo.png}" alt="TRAVELMAKER">
         </a>
         <nav class="gnb">
-            <a th:href="@{/main}" th:classappend="${menu == 'home'} ? 'active'">홈</a>
+            <a th:href="@{/}" th:classappend="${menu == 'home'} ? 'active'">홈</a>
             <a th:href="@{/post/joinMain}" th:classappend="${menu == 'community'} ? 'active'">커뮤니티</a>
             <a th:href="@{/chat/chatList}" th:classappend="${menu == 'chat'} ? 'active'">채팅</a>
         </nav>

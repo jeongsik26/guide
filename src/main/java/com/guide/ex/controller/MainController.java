@@ -17,19 +17,21 @@ public class MainController {
     @Autowired
     private MemberService memberService;
 
-    // 도메인만 입력하고 들어오면 메인으로
+    // 메인 화면
     @GetMapping("/")
-    public String root() {
-        return "redirect:/main";
-    }
-
-    @GetMapping("/main")
-    public void main(HttpSession session, Model model) {
+    public String main(HttpSession session, Model model) {
         if(session.getAttribute("member_id") != null){
             MemberDTO memberInfo = memberService.memberReadOne((Long) session.getAttribute("member_id"));
             model.addAttribute("member_info", memberInfo);
         }
         model.addAttribute("otherMembers", memberService.findProfileMember());
+        return "main";
+    }
+
+    // 예전 주소(/main) 북마크·링크 호환
+    @GetMapping("/main")
+    public String legacyMain() {
+        return "redirect:/";
     }
 
 }

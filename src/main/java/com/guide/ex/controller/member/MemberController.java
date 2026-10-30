@@ -66,7 +66,7 @@ public class MemberController {
             if (memberService.setProfileSession(memberId)) {
                 session.setAttribute("member_profile", true);
             }
-            return "redirect:/main";
+            return "redirect:/";
 
         } else {
             return "redirect:/member/login?error=incorrect";
@@ -79,7 +79,7 @@ public class MemberController {
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/main";
+        return "redirect:/";
     }
 
     @GetMapping("/profile")
@@ -101,7 +101,7 @@ public class MemberController {
         memberService.fileUpload(memberProfileDTO, file);
         session.setAttribute("member_profile", true);
 
-        return "redirect:/main";
+        return "redirect:/";
     }
 
     @GetMapping("/profileModify")
