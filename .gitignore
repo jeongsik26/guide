@@ -47,3 +47,4 @@ pid.file
 guide.env
 guide.jar*
 guide.service
+logs/

@@ -62,6 +62,17 @@ logging:
   level:
     org.springframework: info
     com.guide: debug
+  # 로그 파일: <GUIDE_LOG_PATH>/guide.log (서버: /opt/guide/logs, 로컬 기본: ./logs)
+  file:
+    name: ${GUIDE_LOG_PATH:./logs}/guide.log
+  logback:
+    rollingpolicy:
+      # 하루 단위로 나누고, 하루 안에서도 100MB 가 넘으면 .1, .2 ... 로 나눈다
+      file-name-pattern: ${GUIDE_LOG_PATH:./logs}/guide-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 100MB
+      # 30일 지난 로그 자동 삭제, 전체 로그 용량 1GB 상한
+      max-history: 30
+      total-size-cap: 1GB
 
 com:
   guide:
@@ -116,6 +127,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+logging:
+  file:
+    name: build/test-logs/guide.log
 
 com:
   guide:

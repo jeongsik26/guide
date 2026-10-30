@@ -63,7 +63,10 @@ git pull
 ./start.sh
 ```
 
-- `start.sh`: `build/libs` 의 jar 를 백그라운드로 실행하고 로그(`nohup.out`)를 보여줍니다. `Ctrl+C` 로 로그 보기만 빠져나오며 앱은 계속 실행됩니다.
+- `start.sh`: `build/libs` 의 jar 를 백그라운드로 실행하고 로그를 보여줍니다. `Ctrl+C` 로 로그 보기만 빠져나오며 앱은 계속 실행됩니다.
+- 로그: `/opt/guide/logs/guide.log` (실시간 보기: `tail -F /opt/guide/logs/guide.log`)
+  - 하루 단위로 `guide-YYYY-MM-DD.N.log` 로 나뉘고(하루 안에서도 100MB 마다 분할), 30일 지난 로그는 자동 삭제, 전체 1GB 상한
+  - `nohup.out` 에는 앱이 아예 시작되지 못한 경우의 오류만 남습니다
 - `shutdown.sh`: 정상 종료를 기다리고, 30초 안에 안 꺼지면 강제 종료합니다.
 - 접속: `https://<서버IP>:8888/` (자체 서명 인증서 `ssl.p12`)
 
