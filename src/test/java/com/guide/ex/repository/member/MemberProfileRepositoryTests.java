@@ -3,12 +3,13 @@ package com.guide.ex.repository.member;
 import com.guide.ex.domain.member.Member;
 import com.guide.ex.domain.member.MemberProfile;
 import com.guide.ex.repository.member.MemberProfileRepository;
+import com.guide.ex.repository.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 @SpringBootTest
@@ -18,11 +19,23 @@ public class MemberProfileRepositoryTests {
     @Autowired
     private MemberProfileRepository memberProfileRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Test
     public void memberProfileInsertTest() {
-        Member member = Member.builder().memberId(44L).build();
+        Member member = memberRepository.save(Member.builder()
+                .name("tester")
+                .uid("tester" + System.nanoTime())
+                .pwd("pwd")
+                .salt("")
+                .phone("01012345678")
+                .year(java.time.Year.of(1999))
+                .gender("male")
+                .build());
         MemberProfile memberProfile = MemberProfile.builder()
                 .member(member)
+                .travelType("ENFP")
                 .fileName("exfileName.jpg")
                 .content("자기소개 ..................")
                 .uuid("asdkjfh3h9e8uehw")

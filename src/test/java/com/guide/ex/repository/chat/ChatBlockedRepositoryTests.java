@@ -45,7 +45,10 @@ public class ChatBlockedRepositoryTests {
 
     @Test
     public void testUpdate(){
-        Long blockedId = 1L;
+        Long blockedId = chatBlockedRepository.save(ChatBlocked.builder()
+                .blockedUser("update")
+                .registDate(LocalDateTime.now())
+                .build()).getBlockedID();
 
         Optional<ChatBlocked> result = chatBlockedRepository.findById(blockedId);
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <div id="imageContainer">
@@ -112,19 +112,9 @@
 <!--    </section>-->
 </div>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script th:if="session.member_id != null">
-    let session_member_id = [[${session.member_id}]]
-    let session_member_name = `[[${session.member_name}]]`
-
-    sessionStorage.setItem("member_id", session_member_id)
-    sessionStorage.setItem("member_name", session_member_name)
-
-    console.log(sessionStorage.getItem("member_id"))
-    console.log(sessionStorage.getItem("member_name"))
-</script>
 <script>
     var currentImageIndex = 1; // 기본적으로 첫 번째 이미지가 보입니다.
     function toggleImages() {
@@ -193,7 +183,7 @@
             memberId: member.memberId,
             imgSrc: "/api/photo/" + member.profileInfo.uuid + '_' + member.profileInfo.fileName, // 이미지 경로
             name: member.name, // 이름
-            info: member.ageRange.slice(0, -1) + '/' + member.profileInfo.travelType // 정보 조합
+            info: (member.ageRange || '').replace('대', '') + '/' + member.profileInfo.travelType // 정보 조합
         };
         profiles.push(profile); // profiles 배열에 추가
     }
@@ -262,45 +252,21 @@
 <!--메인 페이지 화면이동 스크립트-->
 
 <script>
+    // 로그인 상태에 따라 버튼이 없을 수 있으므로 있는 버튼에만 연결
     document.addEventListener("DOMContentLoaded", function () {
-        var loginBtn = document.querySelector(".loginBtn");
-        var signupBtn = document.querySelector(".signupBtn");
+        function go(selector, url) {
+            var button = document.querySelector(selector);
+            if (button) {
+                button.addEventListener("click", function () {
+                    window.location.href = url;
+                });
+            }
+        }
 
-        loginBtn.addEventListener("click", function () {
-            window.location.href = '/member/login';
-        });
-
-        signupBtn.addEventListener("click", function () {
-            window.location.href = '/member/signUp';
-        });
-    });
-    document.addEventListener("DOMContentLoaded", function () {
-        var myPageBtn = document.querySelector(".myPageBtn");
-        var logoutBtn = document.querySelector(".logoutBtn");
-        var profileBtn = document.querySelector(".profileBtn");
-
-
-        myPageBtn.addEventListener("click", function () {
-            window.location.href = '/member/myPage';
-        });
-
-        logoutBtn.addEventListener("click", function () {
-            document.getElementById('logoutForm').submit();
-        });
-
-        profileBtn.addEventListener("click", function () {
-            window.location.href = '/member/profile';
-        });
-
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        var profileBtn = document.querySelector(".profileBtn");
-
-        profileBtn.addEventListener("click", function () {
-            window.location.href = '/member/profile';
-        });
-
+        go(".loginBtn", '/member/login');
+        go(".signupBtn", '/member/signUp');
+        go(".myPageBtn", '/member/myPage');
+        go(".profileBtn", '/member/profile');
     });
 </script>
 </body>

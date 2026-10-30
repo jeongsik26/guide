@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,10 +61,6 @@ public class PostController {
     public String carrotDetail(Model model, Long postId) {
         Post post = postService.postDetailRead(postId);
 
-        System.out.println("-----------------------");
-        System.out.println(post.getContent());
-        System.out.println("-----------------------");
-        log.info("postImage {}, postId {}", post.getPostImages(), post.getPostId());
         List<ImageDTO> imageDTOS = post.getPostImages().stream()
                 .map(image -> new ImageDTO(image.getImageId(), image.getUuid(), image.getFileName()))
                 .collect(Collectors.toList());
@@ -113,11 +109,15 @@ public class PostController {
         if (session.getAttribute("member_id") == null) {
             return "redirect:/member/login";
         }
-        return "/post/carrotWrite";
+        return "post/carrotWrite";
     }
 
     @PostMapping("/carrotWrite")
-    public String carrotWriteInput(HttpSession session, CarrotDTO carrotDTO, @RequestParam("file") MultipartFile file) {
+    public String carrotWriteInput(HttpSession session, CarrotDTO carrotDTO,
+                                   @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (session.getAttribute("member_id") == null) {
+            return "redirect:/member/login";
+        }
         postService.carrotRegister(carrotDTO, file, session);
         memberService.updateBoardCount(session);
         return "redirect:/post/carrotMain";
@@ -184,11 +184,15 @@ public class PostController {
         if (session.getAttribute("member_id") == null) {
             return "redirect:/member/login";
         }
-        return "/post/reviewWrite";
+        return "post/reviewWrite";
     }
 
     @PostMapping("/reviewWrite")
-    public String reviewWriteInput(HttpSession session, ReviewDTO reviewDTO, @RequestParam("file") MultipartFile file) {
+    public String reviewWriteInput(HttpSession session, ReviewDTO reviewDTO,
+                                   @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (session.getAttribute("member_id") == null) {
+            return "redirect:/member/login";
+        }
         postService.reviewRegister(reviewDTO, file, session);
         memberService.updateBoardCount(session);
         return "redirect:/post/reviewMain";
@@ -256,11 +260,15 @@ public class PostController {
         if (session.getAttribute("member_id") == null) {
             return "redirect:/member/login";
         }
-        return "/post/joinWrite";
+        return "post/joinWrite";
     }
 
     @PostMapping("/joinWrite")
-    public String joinWriteInput(HttpSession session, JoinDTO joinDTO, @RequestParam("file") MultipartFile file) {
+    public String joinWriteInput(HttpSession session, JoinDTO joinDTO,
+                                 @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (session.getAttribute("member_id") == null) {
+            return "redirect:/member/login";
+        }
         postService.joinRegister(joinDTO, file, session);
         memberService.updateBoardCount(session);
         return "redirect:/post/joinMain";
@@ -268,19 +276,27 @@ public class PostController {
 //  ----------------------------------------------------------------------
 
     @PostMapping("/delete/{postId}")
-    public String deletePost(@PathVariable Long postId, @RequestParam Long memberId, RedirectAttributes redirectAttributes) {
-        try {
-            if (postService.deletePost(postId, memberId)) {
-                redirectAttributes.addFlashAttribute("successMessage", "게시글이 성공적으로 삭제되었습니다.");
-                return "redirect:/post/carrotMain";
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "게시글 삭제에 실패하였습니다.");
-                return "redirect:/post/carrotMain";
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "오류 발생: " + e.getMessage());
-            return "redirect:/error-page";
+    public String deletePost(@PathVariable Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
+        // 작성자 확인은 요청 파라미터가 아닌 로그인 세션 기준
+        Long memberId = (Long) session.getAttribute("member_id");
+        if (memberId == null) {
+            return "redirect:/member/login";
         }
+
+        String listPath = mainPathOf(postService.findPostTypeByPostId(postId));
+        if (postService.deletePost(postId, memberId)) {
+            memberService.updateBoardCount(session);
+            redirectAttributes.addFlashAttribute("successMessage", "게시글이 성공적으로 삭제되었습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "게시글 삭제에 실패하였습니다.");
+        }
+        return "redirect:" + listPath;
+    }
+
+    private String mainPathOf(String postType) {
+        if ("Join".equals(postType)) return "/post/joinMain";
+        if ("Review".equals(postType)) return "/post/reviewMain";
+        return "/post/carrotMain";
     }
 
     @PostMapping("/comment") // 요청 경로 수정
@@ -289,6 +305,9 @@ public class PostController {
                              @RequestParam("postId") Long postId) {
 
         Long memberId = (Long) session.getAttribute("member_id");
+        if (memberId == null) {
+            return "redirect:/member/login";
+        }
 
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setCommentContent(commentContent);

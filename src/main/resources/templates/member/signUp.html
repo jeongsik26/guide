@@ -7,12 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/member/signUp.css}">
 </head>
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <img src="/image/logo.png" alt="로고">
         <p id="title">회원가입</p>
     </header>
+    <p class="error" th:if="${param.error != null}" style="color:#e05;text-align:center">이미 사용 중인 아이디입니다.</p>
     <form action="/member/signUp" method="post" onsubmit="return signUpForm()">
         <div>
             <label for="name"></label>
@@ -37,7 +38,7 @@
         </div>
         <div>
             <label for="year"></label>
-            <input type="number" id="year" name="year" value="1999" min="1900" max="2005">
+            <input type="number" id="year" name="year" value="1999" min="1900">
         </div>
         <div class="gender">
             <input type="radio" id="male" name="gender" class="radio" value="male"><label for="male">남자</label>
@@ -52,7 +53,7 @@
 <script th:src="@{/js/member/mbti.js}"></script>
 <script th:src="@{/js/member/signUp.js}"></script>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 </body>
 </html>

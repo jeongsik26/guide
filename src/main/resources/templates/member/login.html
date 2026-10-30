@@ -10,13 +10,14 @@
 </head>
 
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <img th:src="@{/image/logo.png}" alt="로고">
         <p id="title">로그인을 진행하세요</p>
     </header>
-    <form action="login" method="post" onsubmit="return validateForm()">
+    <p class="error" th:if="${param.error != null}" style="color:#e05;text-align:center">아이디 또는 비밀번호가 올바르지 않습니다.</p>
+    <form th:action="@{/member/login}" method="post" onsubmit="return validateForm()">
         <div>
             <label for="id"></label>
             <input type="text" id="id" name="uid" placeholder="아이디">
@@ -34,7 +35,7 @@
     </div>
 </div>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 </body>
 </html>

@@ -2,14 +2,14 @@ package com.guide.ex.domain.member;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "member")
 public class MemberProfile {
 
     @Id

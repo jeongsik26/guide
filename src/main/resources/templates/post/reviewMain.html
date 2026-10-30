@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <div id="selectMenu">
@@ -47,9 +47,9 @@
                     <img th:if="${post.imageDTOs != null && !post.imageDTOs.isEmpty()}"
                          th:src="@{'/api/photo/' + ${post.imageDTOs[0].uuid} + '_' + ${post.imageDTOs[0].fileName}}"
                          alt="사용자가 게시한 이미지"
-                         th:onerror="@{/images/default.jpg}">
+                         th:attr="onerror=|this.src='@{/image/empty.png}'|">
                     <img th:if="${post.imageDTOs == null || post.imageDTOs.isEmpty()}"
-                         src="@{/images/default.jpg}" alt="Default Image">
+                         th:src="@{/image/empty.png}" alt="Default Image">
                 </a>
             </div>
             <div class="text-section">
@@ -85,7 +85,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 </body>
 </html>

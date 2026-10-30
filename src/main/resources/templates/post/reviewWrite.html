@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/post/write.css}">
 </head>
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div id="container">
     <form th:action="@{/post/reviewWrite}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="postType" value="Review">
@@ -24,9 +24,9 @@
 
         <input type="hidden" name="grade" id="grade" value=""> <!-- 별점 값을 저장할 hidden input 추가 -->
 
-        <input name="title" type="text" placeholder="제목을 입력하세요"> <br>
-        <input name="expense" type="text" placeholder="대략적인 여행 총 경비"><br>
-        <textarea name="content" cols="40" rows="4" placeholder="내용을 입력하세요"></textarea> <br><br>
+        <input name="title" type="text" required maxlength="100" placeholder="제목을 입력하세요"> <br>
+        <input name="expense" type="number" min="0" placeholder="대략적인 여행 총 경비"><br>
+        <textarea name="content" required cols="40" rows="4" placeholder="내용을 입력하세요"></textarea> <br><br>
 
         <div class="ddd">
             <label for="profile-image">사진 첨부</label>
@@ -36,7 +36,7 @@
                         <img id="profile-image" th:src="@{/image/camera.png}" alt="프로필이미지">
                     </label>
                     <div class="file-upload-container">
-                        <input id="select" type="file" name="file" accept="image/png" required="required"
+                        <input id="select" type="file" name="file" accept="image/*"
                                onchange='handleImageUpload(event)'/>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
             <div class="travel-plan">
                 <label for="startTravelDate">여행 기간</label>
                 <p>
-                    <input type="date" id="startTravelDate" name="start_date">
-                    <input type="date" id="endTravelDate" name="end_date">
+                    <input type="date" id="startTravelDate" name="startTravelDate">
+                    <input type="date" id="endTravelDate" name="endTravelDate">
                 </p>
             </div>
         </div>
@@ -66,11 +66,11 @@
 <script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
 <script th:src="@{/js/post/write.js}"></script>
 
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f982e13e4f6fb5fa544e2ca4883ced76&libraries=services"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f982e13e4f6fb5fa544e2ca4883ced76&libraries=services"></script>
 <script th:src="@{/js/post/mapFindLoc.js}"></script>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 </body>
 

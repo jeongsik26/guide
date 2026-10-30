@@ -2,7 +2,7 @@ package com.guide.ex.dto.member;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.time.Year;
 
 @Data

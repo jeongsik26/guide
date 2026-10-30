@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface TestRepository  extends JpaRepository<Test, Long> {
 
     @Query(value = "select now()", nativeQuery = true)
-    String getTime();
+    java.time.LocalDateTime getTime();
 }

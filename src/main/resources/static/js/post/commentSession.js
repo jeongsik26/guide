@@ -1,17 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var memberId = sessionStorage.getItem("member_id");
+    var form = document.getElementById("comment-form");
+    var input = document.getElementById("comment-input");
+    var loggedIn = form.dataset.loggedIn === "true";
 
-    var commentButton = document.getElementById("comment-button");
-    commentButton.addEventListener("click", function () {
-        console.log("==================click=================")
-        if (memberId) {
-            console.log("==================member id exist=================")
-            console.log(memberId)
-            document.getElementById("comment-form").submit();
-        } else {
-            console.log("==================member id not exist=================")
-            console.log("==================member id not exist=================")
+    function submitComment(e) {
+        if (e) e.preventDefault();
+        if (!loggedIn) {
             alert("로그인을 해주세요.");
+            return;
         }
-    });
+        if (input.value.trim() === "") {
+            alert("댓글 내용을 입력해주세요.");
+            return;
+        }
+        form.submit();
+    }
+
+    document.getElementById("comment-button").addEventListener("click", submitComment);
+    form.addEventListener("submit", submitComment);
 });

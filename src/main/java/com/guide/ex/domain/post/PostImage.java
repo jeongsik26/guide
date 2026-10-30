@@ -3,7 +3,7 @@ package com.guide.ex.domain.post;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @SuperBuilder
 @Entity

@@ -12,5 +12,9 @@ public interface ChatService {
 
     List<ChatRoomDTO> memberChatRooms(long memberId);
 
+    boolean isRoomMember(Long roomId, Long memberId);
+
+    List<ChatMessageDTO> roomMessages(Long roomId);
+
 //    void deleteChatRoom(Long roomId);
 }

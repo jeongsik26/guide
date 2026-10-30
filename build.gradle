@@ -1,20 +1,21 @@
-
-buildscript {
-    ext {
-        queryDslVersion = "5.0.0"
-    }
-}
-
-
 plugins {
-    id 'org.springframework.boot' version '2.7.3'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '4.1.2'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
 }
 
-group = 'org.zerock'
+group = 'com.guide'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+ext {
+    queryDslVersion = '7.7'
+}
 
 configurations {
     compileOnly {
@@ -27,91 +28,60 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // 웹 / 뷰
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 웹소켓(STOMP)
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
-    // lombok 로그 처리
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    // MySQL
-    runtimeOnly 'mysql:mysql-connector-java'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // JPA / DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.h2database:h2'
+    developmentOnly 'org.springframework.boot:spring-boot-h2console'
 
+    // QueryDSL (jakarta 지원 OpenFeign 포크)
+    implementation "io.github.openfeign.querydsl:querydsl-jpa:${queryDslVersion}"
+    annotationProcessor "io.github.openfeign.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
+    // 비밀번호 해시(BCrypt)
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    // model mapper
+    implementation 'org.modelmapper:modelmapper:3.2.8'
+
+    // Swagger UI (springfox 대체)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // JPA
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-
-    //model mapper
-    implementation 'org.modelmapper:modelmapper:3.1.0'
-
-    //타임리프
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
-
-    //유효성 검사 valid
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
-    //스웨거 UI
-    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
-
-    // 웹소켓
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.webjars:webjars-locator-core'
-    implementation 'org.webjars:sockjs-client:1.5.1'
-    implementation 'org.webjars:stomp-websocket:2.3.4'
-    implementation 'org.webjars:bootstrap:5.2.3'
-    implementation 'org.webjars:jquery:3.6.4'
-
-    //썸네일
-    implementation 'net.coobird:thumbnailator:0.4.16'
-    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
-
-    //시큐리티
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-//    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-
-    //소셜 로그인?
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-    //S3
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.671'
-
-
-    annotationProcessor(
-
-            "javax.persistence:javax.persistence-api",
-
-            "javax.annotation:javax.annotation-api",
-
-            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
-
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'spring.profiles.active', 'test'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
-        }
-    }
+// bootRun 중 템플릿/정적 파일 수정이 바로 반영되도록 src 리소스를 직접 사용
+tasks.named('bootRun') {
+    sourceResources sourceSets.main
 }

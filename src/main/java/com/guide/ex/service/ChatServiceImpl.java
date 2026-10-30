@@ -18,7 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,18 +49,11 @@ public class ChatServiceImpl implements ChatService {
         Member receiver = memberRepository.findById(chatRoomDTO.getReceiverId()).orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
 
         // 존재하는 채팅방 확인
-        Optional<ChatRoom> result = chatRoomRepository.findRoomBySenderAndReceiver(sender, receiver);
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findRoomBySenderAndReceiver(sender, receiver);
         if (existingChatRoom.isPresent()) {
-            System.out.println("---------------------------------------------------");
-            System.out.println(existingChatRoom.get().getRoomId());
-            System.out.println("---------------------------------------------------");
             return existingChatRoom.get().getRoomId(); // Return the existing chat room ID
         } else {
 
-            System.out.println("---------------------------------------------------");
-            System.out.println("no find room");
-            System.out.println("---------------------------------------------------");
             // Create a new chat room
             ChatRoom chatRoom = ChatRoom.builder()
                     .sender(sender)
@@ -143,4 +136,25 @@ public class ChatServiceImpl implements ChatService {
         return memberChatrooms;
     }
 
+    // 채팅방 참여자(보낸 사람/받는 사람)인지 확인
+    @Override
+    public boolean isRoomMember(Long roomId, Long memberId) {
+        return chatRoomRepository.findById(roomId)
+                .map(room -> memberId.equals(room.getSender().getMemberId())
+                        || memberId.equals(room.getReceiver().getMemberId()))
+                .orElse(false);
+    }
+
+    // 채팅방의 이전 메시지(오래된 순)
+    @Override
+    public List<ChatMessageDTO> roomMessages(Long roomId) {
+        return chatMessageRepository.findByRoomId_RoomIdOrderByMessageIdAsc(roomId).stream()
+                .map(message -> ChatMessageDTO.builder()
+                        .chatMsg(message.getChatMsg())
+                        .memberId(message.getMemberId().getMemberId())
+                        .memberName(message.getMemberId().getName())
+                        .roomId(roomId)
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

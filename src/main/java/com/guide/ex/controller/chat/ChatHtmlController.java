@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -45,26 +45,25 @@ public class ChatHtmlController {
 
         List<ChatRoomDTO> rooms = chatService.memberChatRooms(memberId);
         model.addAttribute("rooms", rooms);
-        return "/chat/chatList";
+        return "chat/chatList";
 
     }
 
     @GetMapping("/chatRoom/{roomId}")
     public String chatRoom(@PathVariable("roomId") Long roomId, HttpSession session, Model model) {
         Long memberId = (Long) session.getAttribute("member_id");
+        if (memberId == null) {
+            return "redirect:/member/login";
+        }
+        if (!chatService.isRoomMember(roomId, memberId)) {
+            return "redirect:/chat/chatList";
+        }
         String name = memberService.memberReadOne(memberId).getName();
 
-        // roomId를 사용하여 추가적인 채팅방 정보를 가져올 수 있습니다.
-        // 예: ChatRoom chatRoom = chatService.findChatRoomById(roomId);
-
-        System.out.println("============================");
-        System.out.println(name);
-        System.out.println("============================");
-
-
         model.addAttribute("member_name", name);
+        model.addAttribute("session_member_id", memberId);
         model.addAttribute("room_id", roomId); // 채팅방 ID를 모델에 추가
 
-        return "/chat/chatRoom.html"; // chatRoom.html 페이지 반환
+        return "chat/chatRoom"; // chatRoom.html 페이지 반환
     }
 }

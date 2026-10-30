@@ -59,8 +59,17 @@ public class MemberServiceTests {
     // 프로필 생성
     @Test
     public void profileRegisterTest() {
+        Long memberId = memberRepository.save(Member.builder()
+                .name("tester")
+                .uid("tester" + System.nanoTime())
+                .pwd("pwd")
+                .salt("")
+                .phone("01012345678")
+                .year(java.time.Year.of(1999))
+                .gender("male")
+                .build()).getMemberId();
         MemberProfileDTO memberProfileDTO = MemberProfileDTO.builder()
-                .memberId(13L)
+                .memberId(memberId)
                 .uuid("test")
                 .content("test")
                 .fileName("fileName.test")

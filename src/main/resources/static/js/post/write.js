@@ -6,6 +6,21 @@ $(document).ready(function () {
         var grade = $(this).attr('value'); // 클릭한 별점의 값
         $('#grade').val(grade); // hidden input에 별점 값 설정
     });
+
+    // 후기 글은 별점 필수, 여행 기간은 시작일 <= 종료일
+    $('form').on('submit', function (e) {
+        if ($('#grade').length && !$('#grade').val()) {
+            alert('별점을 선택해주세요.');
+            e.preventDefault();
+            return;
+        }
+        var start = $('#startTravelDate').val();
+        var end = $('#endTravelDate').val();
+        if (start && end && start > end) {
+            alert('여행 종료 날짜가 시작 날짜보다 빠릅니다.');
+            e.preventDefault();
+        }
+    });
 });
 // 첨부파일
 function handleImageUpload(event) {

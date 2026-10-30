@@ -8,7 +8,7 @@ import com.guide.ex.dto.post.PostDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 public interface MemberService {

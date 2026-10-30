@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +47,8 @@ public class TestRepositoryTests {
     @Test
     public void testSelectOne(){
         log.info("------------test testSelectOne-------------");
-        Optional<com.guide.ex.domain.Test> result =  testRepository.findById(2L);
+        Long id = testRepository.save(com.guide.ex.domain.Test.builder().testCol("select").build()).getTestId();
+        Optional<com.guide.ex.domain.Test> result =  testRepository.findById(id);
         com.guide.ex.domain.Test test = result.orElseThrow();
         log.info(test.toString());
         log.info("------------test testSelectOne-------------");

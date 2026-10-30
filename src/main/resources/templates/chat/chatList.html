@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<div class="header" th:include="/include/header.html"></div>
+<div class="header" th:insert="~{include/header :: header}"></div>
 
 <div class="container">
     <div>
@@ -19,26 +19,15 @@
     <div class="chat_box">
         <ul id="chat_arrange">
             <li class="chat_div" th:each="room : ${rooms}" th:data-room-id="${room.roomId}">
-                <div class="chat_list">
-                    <div class="circle" th:if="${room.receiver.profileInfo != null and session.member_name == room.receiver.name}">
-                        <img th:class="profile" th:src="'/api/photo/' + ${room.sender.profileInfo.uuid + '_' + room.sender.profileInfo.fileName}">
+                <div class="chat_list" th:with="other=${room.sender.memberId == session.member_id ? room.receiver : room.sender}">
+                    <div class="circle" th:if="${other.profileInfo != null}">
+                        <img th:class="profile" th:src="@{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}}">
                     </div>
-
-                    <div class="circle" th:if="${room.receiver.profileInfo != null and session.member_name != room.receiver.name}">
-                        <img th:class="profile" th:src="'/api/photo/' + ${room.receiver.profileInfo.uuid + '_' + room.receiver.profileInfo.fileName}">
-                    </div>
-
-                    <div class="circle" th:unless="${room.receiver.profileInfo != null}">
+                    <div class="circle" th:unless="${other.profileInfo != null}">
                         <img th:class="profile" th:src="@{/image/profile.png}">
                     </div>
                     <div class="list_div">
-                        <span class="name" th:if="${session.member_name == room.receiver.name}" th:text="${room.sender.name}">username1</span>
-                        <span class="name" th:if="${session.member_name != room.receiver.name}" th:text="${room.receiver   .name}">username1</span>
-                    </div>
-                    <div class="delete_div">
-                        <button class="delete_btn">
-                            <img th:src="@{/image/new_delete.png}">
-                        </button>
+                        <span class="name" th:text="${other.name}">username1</span>
                     </div>
                 </div>
             </li>
@@ -53,7 +42,7 @@
             element.addEventListener('click', function() {
                 var roomId = element.getAttribute('data-room-id');
                 if (roomId) { // roomId가 null이 아닌 경우에만 처리
-                    var url = 'chatRoom/' + roomId;
+                    var url = '/chat/chatRoom/' + roomId;
                     window.location.href = url;
                 } else {
                     console.error("roomId is null or undefined");

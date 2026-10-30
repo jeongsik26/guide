@@ -1,12 +1,14 @@
 package com.guide.ex.dto.member;
 
 import com.guide.ex.dto.post.PostDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -20,16 +22,20 @@ public class MemberDTO {
     private Long memberId;
 
     @NotEmpty
+    @JsonIgnore
     private String uid;
     @NotEmpty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pwd;
 
+    @JsonIgnore
     private String salt;
 
 
     @NotEmpty
     private String name;
     @NotEmpty
+    @JsonIgnore
     private String phone;
     @NotEmpty
     private String gender;
@@ -61,6 +67,7 @@ public class MemberDTO {
     }
 
     public String getAgeRange() {
+        if (this.year == null) return "";
         int currentYear = LocalDate.now().getYear(); // 현재 연도를 구함
         int birthYear = this.year.getValue(); // Year 객체에서 연도를 int로 추출
         int age = currentYear - birthYear; // 실제 나이 계산
@@ -71,9 +78,5 @@ public class MemberDTO {
     public String getGenderDescription() {
         if (gender == null) return "정보 없음"; // gender 정보가 없을 경우 처리
         return gender.equals("male") ? "남자" : "여자";
-    }
-
-    public Long getMemberId(Long memberId) {
-        return this.memberId = memberId;
     }
 }

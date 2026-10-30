@@ -54,7 +54,15 @@ public class MemberRepositoryTests {
 
     @Test
     public void memberUpdateTest() {
-        Long member_id = 43L;
+        Long member_id = memberRepository.save(Member.builder()
+                .name("tester")
+                .uid("tester" + System.nanoTime())
+                .pwd("pwd")
+                .salt("")
+                .phone("01012345678")
+                .year(java.time.Year.of(1999))
+                .gender("male")
+                .build()).getMemberId();
 
         Optional<Member> result = memberRepository.findById(member_id);
 

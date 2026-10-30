@@ -17,12 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -43,14 +46,17 @@ public class MemberServiceImpl implements MemberService {
     private final MemberProfileRepository memberProfileRepository;
     private final CommentRepository commentRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     // 회원 등록 작업(회원가입)
     @Override
     public void signUp(MemberDTO memberDto) {
-        String salt = generateSalt();
-        String hashedPassword = hashPassword(memberDto.getPwd(), salt);
-
-        memberDto.setSalt(salt);
-        memberDto.setPwd(hashedPassword);
+        if (isIdAlreadyExists(memberDto.getUid())) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        // BCrypt는 해시 안에 salt를 포함한다. salt 컬럼은 기존 스키마 호환용으로 빈 값 저장
+        memberDto.setSalt("");
+        memberDto.setPwd(passwordEncoder.encode(memberDto.getPwd()));
 
         Member member = modelMapper.map(memberDto, Member.class);
 
@@ -61,13 +67,14 @@ public class MemberServiceImpl implements MemberService {
     public boolean login(String uid, String pwd) {
         Member member = memberRepository.findByUid(uid);
 
-        if (member != null && !member.isBan()) {
-            String hashedPassword = hashPassword(pwd, member.getSalt());
-            if (hashedPassword.equals(member.getPwd())) {
-                return true;
-            }
+        if (member == null || member.isBan() || pwd == null) {
+            return false;
         }
-        return false;
+        if (member.getPwd().startsWith("$2")) {
+            return passwordEncoder.matches(pwd, member.getPwd());
+        }
+        // 이전 방식(MD5 + salt)으로 가입한 회원
+        return legacyHashPassword(pwd, member.getSalt()).equals(member.getPwd());
     }
 
     @Override
@@ -86,38 +93,46 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void fileUpload(MemberProfileDTO dto, MultipartFile file) {
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new NoSuchElementException("해당하는 회원을 찾을 수 없습니다."));
+        Optional<MemberProfile> existing = memberProfileRepository.findByMember(member);
 
-        if (file.isEmpty()) {
-            throw new RuntimeException("업로드된 파일이 비어 있습니다.");
+        boolean hasFile = file != null && !file.isEmpty();
+        if (!hasFile && existing.isEmpty()) {
+            throw new IllegalArgumentException("프로필 사진을 선택해 주세요.");
         }
-        String originalName = file.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
 
-        try {
-            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
-            file.transferTo(savePath);
+        if (hasFile) {
+            String originalName = StringUtils.getFilename(StringUtils.cleanPath(file.getOriginalFilename()));
+            String uuid = UUID.randomUUID().toString();
+            try {
+                Path dir = Paths.get(uploadPath).toAbsolutePath();
+                Files.createDirectories(dir);
+                file.transferTo(dir.resolve(uuid + "_" + originalName));
+            } catch (IOException e) {
+                throw new RuntimeException("파일을 저장하는 도중 에러가 발생했습니다.", e);
+            }
             dto.setUuid(uuid);
             dto.setFileName(originalName);
-
-            MemberProfile memberProfile = modelMapper.map(dto, MemberProfile.class);
-
-            Optional<Member> result = memberRepository.findById(dto.getMemberId());
-            Member member = result.orElseThrow(() -> new NoSuchElementException("해당하는 회원을 찾을 수 없습니다.")); // 조회된 Member가 없을 경우 예외 발생
-
-            memberProfile.setMember(member);
-            memberProfileRepository.save(memberProfile);
-
-
-        } catch (IOException e) {
-            throw new RuntimeException("파일을 저장하는 도중 에러가 발생했습니다.", e);
         }
+
+        // 이미 프로필이 있으면 수정(사진을 새로 올리지 않았으면 기존 사진 유지), 없으면 등록
+        if (existing.isPresent()) {
+            MemberProfile profile = existing.get();
+            profile.change(
+                    hasFile ? dto.getUuid() : profile.getUuid(),
+                    hasFile ? dto.getFileName() : profile.getFileName(),
+                    dto.getContent(),
+                    dto.getTravelType());
+            return;
+        }
+
+        MemberProfile memberProfile = modelMapper.map(dto, MemberProfile.class);
+        memberProfile.setMember(member);
+        memberProfileRepository.save(memberProfile);
     }
 
-    private String generateSalt() {
-        return UUID.randomUUID().toString();
-    }
-
-    private String hashPassword(String password, String salt) {
+    private String legacyHashPassword(String password, String salt) {
         String saltedPassword = password + salt;
         return DigestUtils.md5DigestAsHex(saltedPassword.getBytes());
     }
@@ -212,7 +227,7 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> result = memberRepository.findById((Long) session.getAttribute("member_id"));
         Member member = result.orElseThrow(() -> new NoSuchElementException("해당하는 회원을 찾을 수 없습니다."));
 
-        PageRequest pageable = PageRequest.of(page, size);
+        PageRequest pageable = PageRequest.of(Math.max(page, 1) - 1, size);
         Page<Post> postsPage = postRepository.findAllByMember(member, pageable);
 
         Page<PostDTO> postDTOPage = postsPage.map(post -> {
@@ -240,11 +255,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean setProfileSession(Long member_id) {
-        MemberDTO member = memberReadOne(member_id);
-        if (member.getProfileInfo() != null) {
-            return true;
-        }
-        return false;
+        return memberProfileRepository.findByMember_MemberId(member_id).isPresent();
     }
 
     //    // 회원 삭제 작업

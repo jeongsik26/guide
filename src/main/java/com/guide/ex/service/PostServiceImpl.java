@@ -16,11 +16,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpSession;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -61,27 +63,7 @@ public class PostServiceImpl implements PostService {
         carrot.setMember(member);
         carrotRepository.save(carrot);
 
-        ImageDTO imageDTO = new ImageDTO();
-        if (file.isEmpty()) {
-            throw new RuntimeException("업로드된 파일이 비어 있습니다.");
-        }
-
-        String originalName = file.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-
-        imageDTO.setFileName(originalName);
-        imageDTO.setUuid(uuid);
-        imageDTO.setPostId(carrot.getId());
-        PostImage postImage = modelMapper.map(imageDTO, PostImage.class);
-        postImage.setPost(carrot);
-
-        try {
-            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
-            file.transferTo(savePath);
-            imageRepository.save(postImage);
-        } catch (IOException e) {
-            throw new RuntimeException("파일을 저장하는 도중 에러가 발생했습니다.", e);
-        }
+        saveImage(carrot, file);
     }
 
     @Override
@@ -96,27 +78,7 @@ public class PostServiceImpl implements PostService {
         join.setMember(member);
         joinRepository.save(join);
 
-        ImageDTO imageDTO = new ImageDTO();
-        if (file.isEmpty()) {
-            throw new RuntimeException("업로드된 파일이 비어 있습니다.");
-        }
-
-        String originalName = file.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-
-        imageDTO.setFileName(originalName);
-        imageDTO.setUuid(uuid);
-        imageDTO.setPostId(join.getId());
-        PostImage postImage = modelMapper.map(imageDTO, PostImage.class);
-        postImage.setPost(join);
-
-        try {
-            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
-            file.transferTo(savePath);
-            imageRepository.save(postImage);
-        } catch (IOException e) {
-            throw new RuntimeException("파일을 저장하는 도중 에러가 발생했습니다.", e);
-        }
+        saveImage(join, file);
     }
 
     @Override
@@ -131,28 +93,33 @@ public class PostServiceImpl implements PostService {
         review.setMember(member);
         reviewRepository.save(review); // Review 저장
 
-        ImageDTO imageDTO = new ImageDTO();
-        if (file.isEmpty()) {
-            throw new RuntimeException("업로드된 파일이 비어 있습니다.");
+        saveImage(review, file);
+
+    }
+
+    // 게시글 이미지 저장(선택). 파일명에서 경로를 제거해 업로드 폴더 밖으로 저장되지 않게 한다
+    private void saveImage(Post post, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return;
         }
 
-        String originalName = file.getOriginalFilename();
+        String originalName = StringUtils.getFilename(StringUtils.cleanPath(file.getOriginalFilename()));
         String uuid = UUID.randomUUID().toString();
 
-        imageDTO.setFileName(originalName);
-        imageDTO.setUuid(uuid);
-        imageDTO.setPostId(review.getId());
-        PostImage postImage = modelMapper.map(imageDTO, PostImage.class);
-        postImage.setPost(review);
-
         try {
-            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
-            file.transferTo(savePath);
-            imageRepository.save(postImage);
+            Path dir = Paths.get(uploadPath).toAbsolutePath();
+            Files.createDirectories(dir);
+            file.transferTo(dir.resolve(uuid + "_" + originalName));
         } catch (IOException e) {
             throw new RuntimeException("파일을 저장하는 도중 에러가 발생했습니다.", e);
         }
 
+        PostImage postImage = PostImage.builder()
+                .uuid(uuid)
+                .fileName(originalName)
+                .post(post)
+                .build();
+        imageRepository.save(postImage);
     }
 
     // 거래 게시글 수정
@@ -284,9 +251,6 @@ public class PostServiceImpl implements PostService {
     // 게시글 검색(Service -> Repository)
     @Override
     public Page<PostDTO> postSelectAll(String searchValue, String postType, Pageable pageable) {
-        if (searchValue == null || searchValue.trim().isEmpty()) {
-            throw new IllegalArgumentException("검색 값이 제공되지 않았습니다.");
-        }
         if (postType == null || postType.trim().isEmpty()) {
             throw new IllegalArgumentException("게시판 유형이 제공되지 않았습니다.");
         }

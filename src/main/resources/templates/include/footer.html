@@ -1,17 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>footer</title>
-  <link rel="stylesheet" th:href="@{/css/footer.css}" href="../../static/css/footer.css">
-
-
-</head>
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer >
+<!-- 공통 푸터: th:insert="~{include/footer :: footer}" -->
+<th:block th:fragment="footer">
+<link rel="stylesheet" th:href="@{/css/footer.css}">
+<footer>
   <p>TravelMaker</p>
   <p>연락처 | 010-5037-7966</p>
   <p>팩스 | 02-6007-1298</p>
@@ -19,6 +12,6 @@
   <p>주소 | 서울 강남구 강남대로 94길 20 삼오빌딩 5-9층</p>
   <p>Copyright 2024. TravelMaker All right reserved.</p>
 </footer>
+</th:block>
 </body>
-
 </html>

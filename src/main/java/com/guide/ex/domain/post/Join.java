@@ -3,12 +3,10 @@ package com.guide.ex.domain.post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @SuperBuilder
@@ -26,15 +24,11 @@ public class Join extends Post {
     @Column(nullable = false)
     private int expense;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime startTravelDate;
+    private LocalDate startTravelDate;
 
-    @LastModifiedDate
-    @Column(updatable = false)
-    private LocalDateTime endTravelDate;
+    private LocalDate endTravelDate;
 
-    public void change(int expense, int numPeople, LocalDateTime startTravelDate, LocalDateTime endTravelDate) {
+    public void change(int expense, int numPeople, LocalDate startTravelDate, LocalDate endTravelDate) {
         this.expense = expense;
         this.numPeople = numPeople;
         this.startTravelDate = startTravelDate;

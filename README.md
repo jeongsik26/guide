@@ -37,6 +37,48 @@
 <br>
 <br> 
 
+## 🚀 실행 방법
+
+- Java 25, Spring Boot 4.1, Gradle 9.8 (Gradle Wrapper 포함)
+- 기본 실행은 `local` 프로필로 H2 파일 DB(`./data`)를 사용합니다. 따로 DB를 설치하지 않아도 됩니다.
+
+```bash
+./gradlew bootRun
+```
+
+- 접속: http://localhost:8888/main
+- H2 콘솔(로컬 전용): http://localhost:8888/h2-console (JDBC URL `jdbc:h2:file:./data/guidedb`, 사용자 `sa`)
+- Swagger UI: http://localhost:8888/swagger-ui/index.html
+- 업로드 이미지는 `./upload` 폴더에 저장됩니다(`GUIDE_UPLOAD_PATH` 환경변수로 변경 가능).
+
+### MySQL(운영) 실행
+
+DB 접속 정보는 소스에 넣지 않고 환경변수로 전달합니다.
+
+```bash
+GUIDE_DB_URL="jdbc:mysql://<host>:3306/guidedb?characterEncoding=UTF-8&serverTimezone=Asia/Seoul" GUIDE_DB_USERNAME=guidedb GUIDE_DB_PASSWORD=<비밀번호> ./gradlew bootRun --args='--spring.profiles.active=mysql'
+```
+
+기존 MySQL 데이터를 계속 쓸 경우, 바뀐 컬럼 타입은 `ddl-auto=update`로 자동 변경되지 않으므로 직접 반영해야 합니다.
+
+```sql
+ALTER TABLE post_join MODIFY start_travel_date DATE, MODIFY end_travel_date DATE;
+ALTER TABLE review    MODIFY start_travel_date DATE, MODIFY end_travel_date DATE;
+ALTER TABLE post      MODIFY locationx DECIMAL(12,8), MODIFY locationy DECIMAL(12,8);
+```
+
+### 카카오맵
+
+글쓰기·상세 화면의 지도는 카카오 JavaScript 키를 사용합니다. Kakao Developers > 앱 > 플랫폼 > Web에 실행 도메인(예: `http://localhost:8888`)을 등록해야 지도가 표시됩니다. 지도가 없어도 나머지 기능은 동작합니다.
+
+### 테스트
+
+```bash
+./gradlew test
+```
+
+테스트는 `test` 프로필의 인메모리 H2를 사용하므로 로컬 개발 DB에 영향을 주지 않습니다.
+
 ## 📖 사용 라이브러리
 <img src="https://img.shields.io/badge/KakaoAPI-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"> <img src="https://img.shields.io/badge/sockjs-010101?style=for-the-badge&logo=socketdotio&logoColor=white">
 <img src="https://img.shields.io/badge/stomp-010101?style=for-the-badge&logo=socketdotio&logoColor=white">

@@ -8,7 +8,7 @@
 
 </head>
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <!--        <img src="../image/logo.png" alt="로고">-->
@@ -73,7 +73,7 @@
 </script>
 
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 
 </body>

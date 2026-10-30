@@ -1,10 +1,11 @@
 package com.guide.ex.domain.post;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @SuperBuilder
@@ -17,7 +18,8 @@ public class Carrot extends Post{
     private int price;
 
     @Column(nullable = false)
-    private final boolean status = false;
+    @Builder.Default
+    private boolean status = false;
 
     public void change(int price) {
         this.price = price;

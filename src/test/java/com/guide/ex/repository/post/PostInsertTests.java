@@ -12,8 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -98,7 +99,22 @@ public class PostInsertTests {
 
     @Test
     public void testSelect() {
-        Long postId = 6L;
+        Member member = memberRepository.save(Member.builder()
+                .name("tester")
+                .uid("tester" + System.nanoTime())
+                .pwd("pwd")
+                .salt("")
+                .phone("01012345678")
+                .year(java.time.Year.of(1999))
+                .gender("male")
+                .build());
+        Long postId = testCarrot.save(Carrot.builder()
+                .title("select")
+                .content("select")
+                .price(1000)
+                .postType("Carrot")
+                .member(member)
+                .build()).getPostId();
 
         Optional<Carrot> result = testCarrot.findById(postId);
 
@@ -195,8 +211,8 @@ public class PostInsertTests {
                 .postType("Join")
                 .expense(530000)
                 .numPeople(3)
-                .startTravelDate(LocalDateTime.now())
-                .endTravelDate(LocalDateTime.now().plusDays(5))
+                .startTravelDate(LocalDate.now())
+                .endTravelDate(LocalDate.now().plusDays(5))
                 .build();
 
         Join join1 = postJoin.save(join);
@@ -232,8 +248,8 @@ public class PostInsertTests {
                 .postType("Review")
                 .expense(70000)
                 .grade(140000L)
-                .startTravelDate(LocalDateTime.now())
-                .endTravelDate(LocalDateTime.now().plusDays(2))
+                .startTravelDate(LocalDate.now())
+                .endTravelDate(LocalDate.now().plusDays(2))
                 .build();
 
         Review review1 = testReview.save(review);

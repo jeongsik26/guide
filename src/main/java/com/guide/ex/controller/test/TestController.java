@@ -1,7 +1,7 @@
 package com.guide.ex.controller.test;
 
 import com.guide.ex.service.MemberService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +22,7 @@ public class TestController {
 
     }
 
-    @ApiOperation(value = "location input", notes = "M: GET 위도, 경도값")
+    @Operation(summary = "location input", description = "M: GET 위도, 경도값")
     @GetMapping("/test_location_input")
     public void test_location_input(){
 

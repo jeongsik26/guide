@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>채팅</title>
 
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -20,7 +20,7 @@
     <!--        </button>-->
     <!--    </div>-->
     <div class="chat_header">
-        <a href="/main">
+        <a th:href="@{/chat/chatList}">
             <img th:src="@{/image/guide_logo.png}">
         </a>
     </div>
@@ -44,17 +44,12 @@
 </body>
 
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 
 <script th:inline="javascript">
-    let session_member_id= [[${session_member_id}]]
-    let session_member_name= `[[${member_name}]]`
-    let roomId = [[${room_id}]]
-
-    console.log("===================coookie===================")
-    console.log(session_member_id)
-    console.log(session_member_name)
+    const session_member_id = [[${session_member_id}]];
+    const roomId = [[${room_id}]];
 </script>
 <script th:src="@{/js/chat/chat.js}"></script>
 </html>

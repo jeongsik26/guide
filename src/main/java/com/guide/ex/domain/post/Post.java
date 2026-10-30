@@ -7,7 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,16 +37,16 @@ public class Post {
     private LocalDateTime registerDate;
 
     @LastModifiedDate
-    @Column(updatable = false)
     private LocalDateTime modifyDate;
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 8)
     private BigDecimal locationX;
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 8)
     private BigDecimal locationY;
 
     @Column(nullable = false)
-    private final boolean isDeleted = false;
+    @Builder.Default
+    private boolean isDeleted = false;
 
     @Builder.Default
     private int views = 0;

@@ -1,5 +1,13 @@
 // 아이디 중복 확인
 let check_id  = false
+let checked_id = ""
+
+// 중복확인 후 아이디를 바꾸면 다시 확인하도록
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('id').addEventListener('input', function () {
+        check_id = false
+    })
+})
 
 const tempInfo = ["user1", "travelmaker"]; // 임시로 아이디 만듦
 
@@ -20,7 +28,7 @@ function checkDuplicateId() {
             } else {
                 alert("사용 가능한 아이디입니다.");
                 check_id = true
-                console.log(check_id)
+                checked_id = id
             }
         },
         error: function(xhr, status, error) {
@@ -35,7 +43,9 @@ function signUpForm() {
     let password = document.getElementById('password').value;
     let passwordCheck = document.getElementById('check').value;
     let phone = document.getElementById('phone').value;
-    let year = document.getElementById('year').value;
+    let year = Number(document.getElementById('year').value);
+    let gender = document.querySelector('input[name="gender"]:checked');
+    let maxYear = new Date().getFullYear() - 14;
 
     if (name === "" || id === "" || password === "" || passwordCheck === "" || phone === "" || year === "") {
         alert('모든 항목을 입력해주세요.');
@@ -58,16 +68,18 @@ function signUpForm() {
         return false;
     }
 
-    if (year < 1900 || year >= 2005) {
-        alert('유효한 연도를 입력해주세요. (1900년에서 2005년 사이)');
+    if (year < 1900 || year > maxYear) {
+        alert('유효한 연도를 입력해주세요. (1900년에서 ' + maxYear + '년 사이)');
         return false;
     }
 
-    if(check_id){
-        return true;
+    if (!gender) {
+        alert('성별을 선택해주세요.');
+        return false;
     }
-    else{
-        alert("이미 회원가입된 아이디 입니다.")
+
+    if (!check_id || checked_id !== id) {
+        alert("아이디 중복확인을 해주세요.");
         return false;
     }
     return true;

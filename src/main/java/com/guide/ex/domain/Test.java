@@ -3,7 +3,7 @@ package com.guide.ex.domain;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 @Entity

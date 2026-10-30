@@ -1,29 +1,36 @@
-var mapContainer = document.getElementById('map'),
-    mapOption = {
-        center: new daum.maps.LatLng(37.537187, 127.005476),
-        level: 10
-    };
+// 카카오맵 SDK는 등록된 도메인에서만 초기화된다(Kakao Developers > 플랫폼 > Web 사이트 도메인).
+// 지도가 없더라도 주소 검색과 글쓰기는 동작하도록 한다.
+var mapReady = !!(window.kakao && kakao.maps && kakao.maps.services);
+var map = null, geocoder = null, marker = null;
 
-// 지도 객체 미리 생성
-var map = new daum.maps.Map(mapContainer, mapOption);
-// 주소-좌표 변환 객체 생성
-var geocoder = new daum.maps.services.Geocoder();
-// 마커 미리 생성
-var marker = new daum.maps.Marker({
-    position: new daum.maps.LatLng(37.537187, 127.005476),
-    map: map
-});
+if (mapReady) {
+    var mapContainer = document.getElementById('map');
+    map = new kakao.maps.Map(mapContainer, {
+        center: new kakao.maps.LatLng(37.537187, 127.005476),
+        level: 10
+    });
+    geocoder = new kakao.maps.services.Geocoder();
+    marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(37.537187, 127.005476),
+        map: map
+    });
+} else {
+    console.warn('카카오맵을 불러오지 못했습니다. 앱 키의 허용 도메인을 확인하세요.');
+}
 
 function getLatLngFromRoadName(roadName) {
+    if (!mapReady) {
+        return;
+    }
     geocoder.addressSearch(roadName, function (results, status) {
-        if (status === daum.maps.services.Status.OK) {
+        if (status === kakao.maps.services.Status.OK) {
             var result = results[0];
             var latitude = result.y;
             var longitude = result.x;
             document.getElementById("sample6_latitude").value = latitude;
             document.getElementById("sample6_longitude").value = longitude;
 
-            var coords = new daum.maps.LatLng(latitude, longitude);
+            var coords = new kakao.maps.LatLng(latitude, longitude);
             map.setCenter(coords);
             marker.setPosition(coords);
         } else {

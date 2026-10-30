@@ -12,8 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/member")
@@ -31,6 +31,9 @@ public class MemberController {
 
     @PostMapping("/signUp")
     public String signUp(MemberDTO memberDTO) {
+        if (memberService.isIdAlreadyExists(memberDTO.getUid())) {
+            return "redirect:/member/signUp?error=duplicate";
+        }
         memberService.signUp(memberDTO);
         return "redirect:/member/login";
     }
@@ -84,12 +87,17 @@ public class MemberController {
         if (session.getAttribute("member_id") == null) {
             return "redirect:/member/login";
         }
-        return "/member/profile";
+        return "member/profile";
     }
 
     @PostMapping("/profile")
-    public String uploadFile(HttpSession session, MemberProfileDTO memberProfileDTO, @RequestParam("file") MultipartFile file) {
-        memberProfileDTO.setMemberId((Long) session.getAttribute("member_id"));
+    public String uploadFile(HttpSession session, MemberProfileDTO memberProfileDTO,
+                             @RequestParam(value = "file", required = false) MultipartFile file) {
+        Long memberId = (Long) session.getAttribute("member_id");
+        if (memberId == null) {
+            return "redirect:/member/login";
+        }
+        memberProfileDTO.setMemberId(memberId);
         memberService.fileUpload(memberProfileDTO, file);
         session.setAttribute("member_profile", true);
 
@@ -104,7 +112,7 @@ public class MemberController {
         }
         MemberDTO member = memberService.memberReadOne(sessionMemberId);
         model.addAttribute("member", member);
-        return "/member/profile";
+        return "member/profileModify";
     }
 
     @GetMapping("/myPage")

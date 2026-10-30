@@ -8,7 +8,7 @@ import com.guide.ex.domain.post.Post;
 import com.guide.ex.util.YearAttributeConverter;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"posts", "chatMessages", "sentChatRooms", "receivedChatRooms"})
 public class Member extends BaseEntity {
 
     @Id
@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
     @Column(length = 20, nullable = false, columnDefinition = "varchar(20) default '동메달'")
     private String rating;
 
-    @Column(length = 500, nullable = false)
+    @Column(nullable = false)
     private boolean isBan;
 
     @Column(columnDefinition = "int default 0", name = "post_count")
@@ -83,7 +83,9 @@ public class Member extends BaseEntity {
     // 새로운 회원이 추가될 때 rating 필드의 기본값 설정
     @PrePersist
     protected void onCreate() {
-        this.rating = "동메달";
+        if (this.rating == null) {
+            this.rating = "동메달";
+        }
     }
 
     public void change(String name) {

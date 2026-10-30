@@ -22,7 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -106,8 +106,11 @@ public class CommentServiceImpl implements CommentService {
             }
             if (comment.getMember() != null) {
                 commentDTO.setMemberId(comment.getMember().getId());
-                MemberDTO memberDTO = modelMapper.map(comment.getMember(), MemberDTO.class);
-                commentDTO.setMember(memberDTO);
+                // 댓글 응답(JSON)에는 작성자 표시용 정보만 담는다(비밀번호·연락처 노출 금지)
+                commentDTO.setMember(MemberDTO.builder()
+                        .memberId(comment.getMember().getMemberId())
+                        .name(comment.getMember().getName())
+                        .build());
             }
             return commentDTO;
         }).collect(Collectors.toList());

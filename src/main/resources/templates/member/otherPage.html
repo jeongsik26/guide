@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<div th:include="/include/header.html"></div>
+<div th:insert="~{include/header :: header}"></div>
 <div class="container">
     <header>
         <p id="title">[[${member.name}]]님의 페이지</p>
@@ -118,18 +118,26 @@
     const receiverId = [[${receiverId}]];
 
     document.getElementById('startChat').addEventListener('click', function () {
-        fetch(`/api/chat/create?senderId=${senderId}&receiverId=${receiverId}`, {
+        if (senderId == null) {
+            window.location.href = '/member/login';
+            return;
+        }
+        fetch(`/api/chat/create?receiverId=${receiverId}`, {
             method: 'POST'
         })
-            .then(response => response.json())
-            .then(data => {
+            .then(response => response.json().then(data => ({ok: response.ok, data})))
+            .then(({ok, data}) => {
+                if (!ok) {
+                    alert(data.message || '채팅방을 만들지 못했습니다.');
+                    return;
+                }
                 window.location.href = `/chat/chatRoom/${data.roomId}`;
             })
             .catch(error => console.error('Error:', error));
     });
 </script>
 <footer>
-    <div th:include="/include/footer.html"></div>
+    <div th:insert="~{include/footer :: footer}"></div>
 </footer>
 </body>
 
