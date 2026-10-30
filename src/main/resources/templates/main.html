@@ -80,15 +80,18 @@
                     <h3>TRAVELMAKER 여행자들</h3>
                     <span class="count" th:text="${#lists.size(otherMembers)} + '명'">0명</span>
                 </div>
-                <div class="traveler-list" th:if="${not #lists.isEmpty(otherMembers)}">
-                    <a class="traveler" th:each="m : ${otherMembers}"
-                       th:href="@{/member/otherPage/{id}(id=${m.memberId})}">
-                        <img class="avatar"
-                             th:src="@{'/api/photo/' + ${m.profileInfo.uuid + '_' + m.profileInfo.fileName}}"
-                             th:attr="onerror=|this.src='@{/image/pf_example.png}'|" alt="">
-                        <span class="name" th:text="${m.name}">이름</span>
-                        <span class="meta" th:text="|${m.ageRange} · ${m.profileInfo.travelType}|">20대 · ENFP</span>
-                    </a>
+                <!-- 자동으로 왼쪽으로 흐르는 목록 (마우스를 올리면 멈춤) -->
+                <div class="traveler-list" id="travelerList" th:if="${not #lists.isEmpty(otherMembers)}">
+                    <div class="traveler-track" id="travelerTrack">
+                        <a class="traveler" th:each="m : ${otherMembers}"
+                           th:href="@{/member/otherPage/{id}(id=${m.memberId})}">
+                            <img class="avatar"
+                                 th:src="@{'/api/photo/' + ${m.profileInfo.uuid + '_' + m.profileInfo.fileName}}"
+                                 th:attr="onerror=|this.src='@{/image/pf_example.png}'|" alt="">
+                            <span class="name" th:text="${m.name}">이름</span>
+                            <span class="meta" th:text="|${m.ageRange} · ${m.profileInfo.travelType}|">20대 · ENFP</span>
+                        </a>
+                    </div>
                 </div>
                 <p class="empty-text" th:if="${#lists.isEmpty(otherMembers)}">아직 프로필을 등록한 여행자가 없어요.</p>
             </div>
@@ -117,6 +120,37 @@
             dot.addEventListener('click', function () { show(index); });
         });
         setInterval(function () { show((current + 1) % images.length); }, 5000);
+    })();
+
+    // 여행자 목록 자동 흐름: 한 줄에 다 안 들어갈 때만 목록을 한 벌 더 붙여 끊김 없이 반복
+    (function () {
+        var list = document.getElementById('travelerList');
+        var track = document.getElementById('travelerTrack');
+        if (!list || !track) return;
+
+        function setup() {
+            track.classList.remove('is-marquee');
+            track.querySelectorAll('[data-clone]').forEach(function (el) { el.remove(); });
+            if (track.scrollWidth <= list.clientWidth) return;
+
+            Array.prototype.slice.call(track.children).forEach(function (item) {
+                var clone = item.cloneNode(true);
+                clone.setAttribute('data-clone', '');
+                clone.setAttribute('aria-hidden', 'true');
+                clone.setAttribute('tabindex', '-1');
+                track.appendChild(clone);
+            });
+            // 한 명당 약 2초 속도
+            track.style.setProperty('--marquee-duration', (track.children.length / 2) * 2 + 's');
+            track.classList.add('is-marquee');
+        }
+
+        window.addEventListener('load', setup);
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setup, 200);
+        });
     })();
 </script>
 </body>

@@ -7,7 +7,26 @@
 .auth .card-body { padding: 28px; }
 .auth .field-row { margin-top: 16px; }
 .auth .field-row > .field { margin-top: 0; }
-.auth-submit { margin-top: 28px; }
+.auth-submit { margin-top: 20px; }
+
+/* 아이디 저장 체크박스 */
+.check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: var(--fs-sm);
+    color: var(--color-text-sub);
+    cursor: pointer;
+    user-select: none;
+}
+.check input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
 .auth-switch { margin-top: 20px; text-align: center; font-size: var(--fs-sm); color: var(--color-text-sub); }
 .auth-switch a { margin-left: 4px; font-weight: 600; color: var(--color-primary); }
 
