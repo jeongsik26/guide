@@ -1,55 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>채팅</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>채팅 · TRAVELMAKER</title>
     <link rel="stylesheet" th:href="@{/css/chat/chat.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
-
 <body>
-<header>
-    <!--    <div class="chat_close">-->
-    <!--        <button>-->
-    <!--            <img th:src="@{/image/chat_close.png}" alt="">-->
-    <!--        </button>-->
-    <!--    </div>-->
-    <div class="chat_header">
-        <a th:href="@{/chat/chatList}">
-            <img th:src="@{/image/guide_logo.png}">
-        </a>
-    </div>
-</header>
+<header th:replace="~{include/header :: header('chat')}"></header>
 
-<form id="chatForm">
-    <div id="chat_list">
-        <!--    <div id="chat_msg"></div>-->
-    </div>
-    <div class="chat_input">
-        <label for="chat_content"></label><input type="text" id="chat_content" name="chat_content" placeholder="채팅을 입력해주세요.">
-        <button type="submit" id="chat_btn">
-            <div>
-                <img th:src="@{/image/input_btn.png}" alt="">
-            </div>
-            <!--        <img th:src="@{/image/input_btn.png}" alt="">-->
-        </button>
-    </div>
-</form>
+<main class="page page-medium chat-page">
+    <section class="card chat-room">
+        <div class="chat-head">
+            <a class="back" th:href="@{/chat/chatList}" aria-label="채팅 목록">‹</a>
+            <th:block th:if="${other != null}">
+                <img class="avatar"
+                     th:src="${other.profileInfo != null} ? @{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}} : @{/image/profile.png}"
+                     th:attr="onerror=|this.src='@{/image/profile.png}'|" alt="">
+                <a th:href="@{/member/otherPage/{id}(id=${other.memberId})}"><strong th:text="${other.name}">상대방</strong></a>
+            </th:block>
+            <strong th:unless="${other != null}">채팅</strong>
+        </div>
 
-</body>
+        <div id="chat_list" class="messages"></div>
 
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
+        <form id="chatForm" class="chat-input">
+            <input class="input" type="text" id="chat_content" name="chat_content" maxlength="500"
+                   autocomplete="off" placeholder="메시지를 입력하세요">
+            <button type="submit" id="chat_btn" class="btn btn-primary">전송</button>
+        </form>
+    </section>
+</main>
 
 <script th:inline="javascript">
-    const session_member_id = [[${session_member_id}]];
-    const roomId = [[${room_id}]];
+    const session_member_id = /*[[${session_member_id}]]*/ null;
+    const roomId = /*[[${room_id}]]*/ null;
 </script>
 <script th:src="@{/js/chat/chat.js}"></script>
+</body>
 </html>

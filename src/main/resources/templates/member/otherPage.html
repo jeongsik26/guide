@@ -1,130 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타회원 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/member/otherPage.css}">
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title th:text="${member.name} + '님의 프로필 · TRAVELMAKER'">마이페이지 · TRAVELMAKER</title>
+    <link rel="stylesheet" th:href="@{/css/member/member.css}">
 </head>
-
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div class="container">
-    <header>
-        <p id="title">[[${member.name}]]님의 페이지</p>
-    </header>
-    <section>
-        <div id="left">
-            <div id="otherProfile">
-<!--                <div id="ratingImg">-->
-<!--                    <img th:if="${member.rating == '금메달'}" th:src="@{/image/high.png}" alt="금메달">-->
-<!--                    <img th:if="${member.rating == '은메달'}" th:src="@{/image/second.png}" alt="은메달">-->
-<!--                    <img th:if="${member.rating == '동메달'}" th:src="@{/image/third.png}" alt="동메달">-->
-<!--                </div>-->
-                <div id="profilePhoto">
-                    <div id="circle">
-                        <img th:src="'/api/photo/' + ${member.profileInfo.uuid + '_' + member.profileInfo.fileName}">
-                    </div>
-                </div>
-                <div id="name">
-                    <p style="font-family: 'BMJUA';">[[${member.name}]]</p>
-                </div>
-                <div id="info">
-                    <span id="info_content">[[${member.profileInfo.content}]]</span>
-                </div>
+<header th:replace="~{include/header :: header('')}"></header>
+
+<main class="page mypage" th:with="profile=${member.profileInfo}">
+    <div class="mypage-grid">
+        <aside class="card profile-card">
+            <img class="avatar avatar-xl"
+                 th:src="${profile != null} ? @{'/api/photo/' + ${profile.uuid + '_' + profile.fileName}} : @{/image/user.png}"
+                 th:attr="onerror=|this.src='@{/image/user.png}'|" alt="프로필 사진">
+            <h1 class="name" th:text="${member.name}">이름</h1>
+            <p class="sub">[[${member.ageRange}]] · [[${member.genderDescription}]]</p>
+            <span class="badge" th:if="${profile != null}" th:text="${profile.travelType}">ENFP</span>
+            <p class="intro" th:if="${profile != null and !#strings.isEmpty(profile.content)}" th:text="${profile.content}">한줄 소개</p>
+
+            <div class="stats">
+                <div><strong th:text="${member.postCount}">0</strong><span>게시글</span></div>
+                <div><strong th:text="${member.commentCount}">0</strong><span>댓글</span></div>
             </div>
-            <div>
-                <button id="startChat">1:1 채팅</button>
-            </div>
-            <div id="otherCount">
-                <div id="post">
-                    <img th:src="@{/image/post.png}" alt="게시물">
-                    <p>[[${member.postCount}]]</p>
+
+            <button type="button" class="btn btn-primary btn-block" id="startChat">1:1 채팅하기</button>
+        </aside>
+
+        <div class="mypage-main">
+            <section class="card card-body">
+                <h2>여행 유형</h2>
+                <div class="type-grid" th:if="${profile != null and #strings.length(profile.travelType) == 4}">
+                    <div class="type-chip c1" th:text="${#strings.startsWith(profile.travelType, 'E')} ? '사람 많은 도시파' : '나무 많은 자연파'">도시파</div>
+                    <div class="type-chip c2" th:text="${#strings.contains(profile.travelType, 'S')} ? '정해진 코스파' : '상상대로 모험파'">코스파</div>
+                    <div class="type-chip c3" th:text="${#strings.contains(profile.travelType, 'F')} ? '감성파' : '효율파'">감성파</div>
+                    <div class="type-chip c4" th:text="${#strings.contains(profile.travelType, 'J')} ? '꼼꼼한 계획파' : '끌리는대로 행동파'">계획파</div>
                 </div>
-                <div id="chat">
-                    <img th:src="@{/image/chat.png}" alt="채팅">
-                    <p>[[${member.commentCount}]]</p>
-                </div>
-            </div>
-        </div>
-        <div id="right">
-            <p id="otherInfo">상세 정보</p>
-            <div id="userInfo">
-                <div class="cir">[[${member.getAgeRange()}]]</div>
-                <div class="cir">[[${member.getGenderDescription()}]]</div>
-            </div>
-            <div id="mbti">
-                <p>나의 여행 유형</p>
-                <p id="userMbti">
-                <p>[[${member.profileInfo.travelType}]]</p></p>
-                <div id="mbtiBox">
-                    <div class="box" style="background-color: #FF6392" th:if="${member.profileInfo.travelType.startsWith('E')}">
-                        사람 많은 도시파
-                    </div>
-                    <div class="box" style="background-color: #FF6392" th:if="${member.profileInfo.travelType.startsWith('I')}">
-                        나무 많은 자연파
-                    </div>
-                    <div class="box" style="background-color: #FFD23F" th:if="${member.profileInfo.travelType.contains('S')}">
-                        정해진 코스 관광파
-                    </div>
-                    <div class="box" style="background-color: #FFD23F" th:if="${member.profileInfo.travelType.contains('N')}">
-                        상상대로 모험파
-                    </div>
-                    <div class="box" style="background-color: #7EC8F8" th:if="${member.profileInfo.travelType.contains('F')}">
-                        감성파
-                    </div>
-                    <div class="box" style="background-color: #7EC8F8" th:if="${member.profileInfo.travelType.contains('T')}">
-                        효율파
-                    </div>
-                    <div class="box" style="background-color: #5AA9E6" th:if="${member.profileInfo.travelType.contains('J')}">
-                        꼼꼼한 계획파
-                    </div>
-                    <div class="box" style="background-color: #5AA9E6" th:if="${member.profileInfo.travelType.contains('P')}">
-                        끌리는대로 행동파
-                    </div>
-                </div>
-            </div>
-            <div id="otherPost">
-                <div id="more">
-                    <p>[[${member.name}]]님의 게시물</p>
-                </div>
-                <ul th:if="${#lists.isEmpty(member.posts)}">
-                    <br>
-                    <div>등록한 게시글이 없습니다.</div>
-                </ul>
-                <ul th:if="${not #lists.isEmpty(member.posts)}">
+                <p class="muted" th:unless="${profile != null and #strings.length(profile.travelType) == 4}">아직 등록된 여행 유형이 없어요.</p>
+            </section>
+
+            <section class="card card-body">
+                <h2>최근 작성한 글</h2>
+                <ul class="post-list" th:if="${not #lists.isEmpty(member.posts)}">
                     <li th:each="post : ${member.posts}">
-                        <span th:if="${post.postType == 'Review'}"><a
-                                th:href="@{/post/reviewDetail(postId=${post.postId})}">[후기] <span
-                                th:text="${post.title}"></span></a></span>
-                        <span th:if="${post.postType == 'Join'}"><a
-                                th:href="@{/post/joinDetail(postId=${post.postId})}">[모집] <span
-                                th:text="${post.title}"></span></a></span>
-                        <span th:if="${post.postType == 'Carrot'}"><a
-                                th:href="@{/post/carrotDetail(postId=${post.postId})}">[당근] <span
-                                th:text="${post.title}"></span></a></span>
+                        <a th:with="key=${post.postType == 'Join'} ? 'join' : (${post.postType == 'Review'} ? 'review' : 'carrot')"
+                           th:href="@{'/post/' + ${key} + 'Detail'(postId=${post.postId})}">
+                            <span class="badge badge-gray"
+                                  th:text="${post.postType == 'Join'} ? '동행' : (${post.postType == 'Review'} ? '후기' : '거래')">동행</span>
+                            <span class="title" th:text="${post.title}">제목</span>
+                            <span class="date" th:text="${#temporals.format(post.registerDate, 'yyyy.MM.dd')}">2026.01.01</span>
+                        </a>
                     </li>
                 </ul>
-            </div>
+                <p class="muted" th:if="${#lists.isEmpty(member.posts)}">등록한 게시글이 없어요.</p>
+            </section>
         </div>
-    </section>
-</div>
+    </div>
+</main>
+
+<footer th:replace="~{include/footer :: footer}"></footer>
 
 <script th:inline="javascript">
-    /* 서버로부터 받은 로그인한 사용자의 memberId */
-    const senderId = [[${senderId}]];
-    /* 선택된 상대방 사용자의 memberId */
-    const receiverId = [[${receiverId}]];
+    const senderId = /*[[${senderId}]]*/ null;     // 로그인한 사용자
+    const receiverId = /*[[${receiverId}]]*/ null; // 보고 있는 회원
 
     document.getElementById('startChat').addEventListener('click', function () {
         if (senderId == null) {
             window.location.href = '/member/login';
             return;
         }
-        fetch(`/api/chat/create?receiverId=${receiverId}`, {
-            method: 'POST'
-        })
+        fetch(`/api/chat/create?receiverId=${receiverId}`, {method: 'POST'})
             .then(response => response.json().then(data => ({ok: response.ok, data})))
             .then(({ok, data}) => {
                 if (!ok) {
@@ -136,9 +81,5 @@
             .catch(error => console.error('Error:', error));
     });
 </script>
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
 </body>
-
 </html>

@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const selectMBTI = document.querySelectorAll('.select');
-    const travel_type = [];
     const mbtiInput = document.getElementById('mbtiResult');  // 숨겨진 입력 필드 참조
+
+    // 프로필 수정 화면: 미리 선택된 버튼(.selected)으로 시작값을 채운다
+    const travel_type = Array.from(selectMBTI).map(group => {
+        const selected = group.querySelector('.selectBtn.selected');
+        return selected ? selected.id : undefined;
+    });
 
     selectMBTI.forEach((group, index) => {
         const buttons = group.querySelectorAll('.selectBtn');
@@ -12,13 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('selected');
                 travel_type[index] = this.id;
 
-                if (travel_type.length === selectMBTI.length && !travel_type.includes(undefined)) {
-                    const mbti = travel_type.join('');
-                    console.log("여행 MBTI: ", mbti);
-                    mbtiInput.value = mbti;  // 숨겨진 입력 필드의 값 업데이트
+                if (!travel_type.includes(undefined)) {
+                    mbtiInput.value = travel_type.join('');  // 숨겨진 입력 필드의 값 업데이트
                 }
             });
         });
     });
 });
-

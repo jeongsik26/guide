@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- 모든 화면 공통 head: <th:block th:replace="~{include/head :: common}"></th:block> -->
+<th:block th:fragment="common">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon-32.png}">
+    <link rel="apple-touch-icon" th:href="@{/apple-touch-icon.png}">
+    <meta name="theme-color" content="#FF6392">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</th:block>
+</head>
+</html>

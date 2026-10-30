@@ -1,80 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필</title>
-    <link rel="stylesheet" th:href="@{/css/member/profile.css}">
-
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>프로필 등록 · TRAVELMAKER</title>
+    <link rel="stylesheet" th:href="@{/css/member/member.css}">
 </head>
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div class="container">
-    <header>
-        <!--        <img src="../image/logo.png" alt="로고">-->
-        <p id="title">프로필</p>
-    </header>
-    <form action="/member/profile" method="post" enctype="multipart/form-data">
-        <div id="imagePreview"></div>
-        <label class="file-label">
-            <input type="file" id="file" name="file" required>
-        </label>
-        <br>
-        <br>
-        <div>
-            <label for="content"></label>
-            <input type="text" id="content" name="content" placeholder="한줄소개">
+<header th:replace="~{include/header :: header('')}"></header>
+
+<main class="page page-medium profile-edit">
+    <div class="page-title">
+        <h1>프로필 등록</h1>
+        <p>다른 여행자들에게 보여질 나의 프로필을 만들어 주세요.</p>
+    </div>
+
+    <form class="card card-body" th:action="@{/member/profile}" method="post" enctype="multipart/form-data"
+          onsubmit="return checkTravelType()">
+        <div class="photo-field">
+            <label class="photo" for="file">
+                <img id="previewImage" th:src="@{/image/pf_example.png}" alt="프로필 사진">
+                <span class="photo-edit">변경</span>
+            </label>
+            <input type="file" id="file" name="file" accept="image/*" required hidden>
+            <p class="hint">사진을 눌러 프로필 사진을 선택하세요.</p>
         </div>
-        <div class="select">
-            <button type="button" class="selectBtn" id="E">사람 많은 도시파</button>
-            <button type="button" class="selectBtn" id="I">나무 많은 자연파</button>
+
+        <div class="field">
+            <label for="content">한줄 소개</label>
+            <input class="input" type="text" id="content" name="content" maxlength="100"
+                   placeholder="예) 바다를 좋아하는 계획형 여행자입니다">
         </div>
-        <div class="select">
-            <button type="button" class="selectBtn" id="S">정해진 코스파</button>
-            <button type="button" class="selectBtn" id="N">상상대로 모험파</button>
+
+        <div class="field">
+            <span class="label">나의 여행 유형</span>
+            <p class="hint">각 줄에서 나와 더 가까운 쪽을 골라 주세요.</p>
+            <div class="select">
+                <button type="button" class="selectBtn" id="E">사람 많은 도시파</button>
+                <button type="button" class="selectBtn" id="I">나무 많은 자연파</button>
+            </div>
+            <div class="select">
+                <button type="button" class="selectBtn" id="S">정해진 코스파</button>
+                <button type="button" class="selectBtn" id="N">상상대로 모험파</button>
+            </div>
+            <div class="select">
+                <button type="button" class="selectBtn" id="F">감성파</button>
+                <button type="button" class="selectBtn" id="T">효율파</button>
+            </div>
+            <div class="select">
+                <button type="button" class="selectBtn" id="J">꼼꼼한 계획파</button>
+                <button type="button" class="selectBtn" id="P">끌리는대로 행동파</button>
+            </div>
+            <input type="hidden" id="mbtiResult" name="travelType" value="">
         </div>
-        <div class="select">
-            <button type="button" class="selectBtn" id="F">감성파</button>
-            <button type="button" class="selectBtn" id="T">효율파</button>
+
+        <div class="form-actions">
+            <a class="btn btn-ghost" th:href="@{/main}">취소</a>
+            <button type="submit" class="btn btn-primary">저장하기</button>
         </div>
-        <div class="select">
-            <button type="button" class="selectBtn" id="J">꼼꼼한 계획파</button>
-            <button type="button" class="selectBtn" id="P">끌리는대로 행동파</button>
-        </div>
-        <input type="hidden" id="mbtiResult" name="travelType" value="">
-        <br>
-        <br>
-        <button type="submit" class="loginBtn">완료</button>
     </form>
-</div>
+</main>
+
+<footer th:replace="~{include/footer :: footer}"></footer>
+
 <script th:src="@{/js/member/mbti.js}"></script>
 <script>
-    document.getElementById('file').addEventListener('change', function(event) {
-        var file = event.target.files[0]; // Get the selected file
-        var reader = new FileReader(); // Create a FileReader object to read the file
-
-        reader.readAsDataURL(file); // Read the file as a data URL
-
-        reader.onload = function(e) {
-            var imagePreview = document.getElementById('imagePreview'); // Get the image preview div
-            imagePreview.innerHTML = ''; // Clear previous content
-
-            var imgElement = document.createElement('img'); // Create an image element
-            imgElement.src = e.target.result; // Set the source of the image to the data URL
-
-            imgElement.style.width = '100%'; // Set width to 100% to fill the container
-            imgElement.style.height = '100%'; // Set height to 100% to fill the container
-            imgElement.style.objectFit = 'cover'; // Ensure the image covers the container
-            imgElement.style.borderRadius = '50%'; // Apply border-radius for a circular shape
-
-            imagePreview.appendChild(imgElement); // Append the image element to the image preview div
-        };
+    // 사진 미리보기
+    document.getElementById('file').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) { document.getElementById('previewImage').src = e.target.result; };
+        reader.readAsDataURL(file);
     });
+
+    function checkTravelType() {
+        if (document.getElementById('mbtiResult').value.length !== 4) {
+            alert('여행 유형을 네 줄 모두 선택해 주세요.');
+            return false;
+        }
+        return true;
+    }
 </script>
-
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
-
 </body>
 </html>

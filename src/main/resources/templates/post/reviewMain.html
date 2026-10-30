@@ -1,91 +1,96 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상품-메인</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/post/reviewMain.css}">
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>여행 후기 · TRAVELMAKER</title>
+    <link rel="stylesheet" th:href="@{/css/post/board.css}">
 </head>
-
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div class="container">
-    <header>
-        <div id="selectMenu">
-            <a th:href="@{/post/joinMain}">모집</a>
-            <a th:href="@{/post/reviewMain}" style="color:#FF6392">후기</a>
-            <a th:href="@{/post/carrotMain}" >거래</a>
+<header th:replace="~{include/header :: header('community')}"></header>
+
+<main class="page board"
+      th:with="searching=${param.searchValue != null},
+               listUrl=${searching} ? '/post/reviewMain/search' : '/post/reviewMain'">
+    <div class="board-head">
+        <div>
+            <h1>여행 후기</h1>
+            <p class="desc">다녀온 여행 이야기를 나눠 주세요.</p>
         </div>
-        <div id="selectMenu2">
-            <div id="sortMenu">
-                <a href="#" class="filter-link" th:href="@{/post/reviewMain}">최신순</a>
-                <a href="#" class="filter-link" th:href="@{/post/reviewMain/view}">많이 본 순</a>
-                <a href="#" class="filter-link" th:href="@{/post/reviewMain/comments}">댓글순</a>
-            </div>
-            <div id="use">
-                <form th:action="@{/post/reviewMain/search}" method="get">
-                    <input type="text" name="searchValue" id="searchInp" placeholder="검색어를 입력하세요">
-                    <input type="hidden" name="postType" value="Review"> <!-- postType을 Review로 설정 -->
-                    <button type="submit" id="searchBtn">
-                        <img th:src="@{/image/searchBtn.png}" alt="검색 버튼">
-                    </button>
-                </form>
-                <a th:href="@{/post/reviewWrite}">
-                    <button type="submit" id="postBtn">+ 올리기</button>
-                </a>
-            </div>
+        <a class="btn btn-dark" th:href="@{/post/reviewWrite}">글쓰기</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${successMessage != null}" th:text="${successMessage}"></div>
+    <div class="alert alert-error" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
+
+    <nav class="tabs board-tabs">
+        <a th:href="@{/post/joinMain}" th:classappend="${'Review' == 'Join'} ? 'active'">동행 모집</a>
+        <a th:href="@{/post/reviewMain}" th:classappend="${'Review' == 'Review'} ? 'active'">여행 후기</a>
+        <a th:href="@{/post/carrotMain}" th:classappend="${'Review' == 'Carrot'} ? 'active'">중고 거래</a>
+    </nav>
+
+    <div class="board-toolbar">
+        <div class="sort">
+            <a th:href="@{/post/reviewMain}" th:classappend="${sort == 'registerDate'} ? 'active'">최신순</a>
+            <a th:href="@{/post/reviewMain/view}" th:classappend="${sort == 'views'} ? 'active'">조회순</a>
+            <a th:href="@{/post/reviewMain/comments}" th:classappend="${sort == 'comments'} ? 'active'">댓글순</a>
         </div>
-    </header>
-    <section>
-        <div th:if="${posts.isEmpty()}">
-            <p>게시물이 존재하지 않습니다.</p>
-        </div>
-        <div th:each="post : ${posts}" class="carrotBox" th:if="${not posts.isEmpty()}">
-            <div class="image-section">
-                <a th:href="@{/post/reviewDetail(postId=${post.postId})}">
-                    <img th:if="${post.imageDTOs != null && !post.imageDTOs.isEmpty()}"
-                         th:src="@{'/api/photo/' + ${post.imageDTOs[0].uuid} + '_' + ${post.imageDTOs[0].fileName}}"
-                         alt="사용자가 게시한 이미지"
-                         th:attr="onerror=|this.src='@{/image/empty.png}'|">
-                    <img th:if="${post.imageDTOs == null || post.imageDTOs.isEmpty()}"
-                         th:src="@{/image/empty.png}" alt="Default Image">
-                </a>
+        <form class="search" th:action="@{/post/reviewMain/search}" method="get">
+            <input type="hidden" name="postType" value="Review">
+            <input class="input" type="search" name="searchValue" th:value="${param.searchValue}"
+                   placeholder="제목, 내용, 작성자 검색">
+            <button type="submit" aria-label="검색">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
+        </form>
+    </div>
+
+    <p class="search-result" th:if="${searching}">
+        '<strong th:text="${param.searchValue}"></strong>' 검색 결과 <span th:text="${posts.totalElements}">0</span>건
+        <a th:href="@{/post/reviewMain}">전체 보기</a>
+    </p>
+
+    <div class="empty" th:if="${posts.isEmpty()}">
+        <p>아직 게시글이 없어요.</p>
+        <a class="btn btn-primary btn-sm" th:href="@{/post/reviewWrite}">첫 글 쓰기</a>
+    </div>
+
+    <section class="post-grid" th:unless="${posts.isEmpty()}">
+        <a class="post-card" th:each="post : ${posts.content}"
+           th:href="@{/post/reviewDetail(postId=${post.postId})}">
+            <div class="thumb">
+                <img th:if="${post.imageDTOs != null && !post.imageDTOs.isEmpty()}"
+                     th:src="@{'/api/photo/' + ${post.imageDTOs[0].uuid} + '_' + ${post.imageDTOs[0].fileName}}"
+                     th:attr="onerror=|this.parentNode.classList.add('no-image');this.remove()|"
+                     alt="" loading="lazy">
+                <span class="placeholder" th:if="${post.imageDTOs == null || post.imageDTOs.isEmpty()}">✈️</span>
+                <span class="placeholder fallback">✈️</span>
             </div>
-            <div class="text-section">
-                <span class="board-title" th:text="${post.title}">후기글 제목</span>
-                <div class="additional-text">
-                    <p id="dateCSS">[[${#temporals.format(post.registerDate, 'yyyy-MM-dd')}]]</p>
-                    <p th:text="${post.commentCount} + ' replies'">댓글수</p>
-                    <p th:text="${post.views} + ' views'">조회수</p>
+            <div class="body">
+                <div class="tags">
+                    <span class="stars" th:text="${#strings.repeat('★', post.grade)} + ${#strings.repeat('☆', 5 - post.grade)}">★★★★★</span>
+                </div>
+                <h3 class="title" th:text="${post.title}">제목</h3>
+                <div class="meta">
+                    <span th:text="${#temporals.format(post.registerDate, 'yyyy.MM.dd')}">2026.01.01</span>
+                    <span>조회 [[${post.views}]]</span>
+                    <span>댓글 [[${post.commentCount}]]</span>
                 </div>
             </div>
-        </div>
+        </a>
     </section>
-    <div class="container mt-3" th:if="${not posts.isEmpty()}">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <!-- 이전 페이지 버튼 -->
-                <li class="page-item" th:classappend="${!posts.hasPrevious()} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/post/reviewMain(page=${posts.number}, size=${posts.size}, sort=${sort})}" th:unless="${!posts.hasPrevious()}">Previous</a>
-                </li>
-                <!-- 페이지 번호 버튼들 -->
-                <th:block th:each="i : ${#numbers.sequence(1, posts.totalPages)}">
-                    <li class="page-item" th:class="${posts.number == i} ? 'active' : ''">
-                        <a class="page-link" th:href="@{/post/reviewMain(page=${i}, size=${posts.size}, sort=${sort})}" th:text="${i}"></a>
-                    </li>
-                </th:block>
-                <!-- 다음 페이지 버튼 -->
-                <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/post/reviewMain(page=${posts.number + 2}, size=${posts.size}, sort=${sort})}" th:if="${posts.hasNext()}">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
+
+    <nav class="pagination" th:if="${posts.totalPages > 1}">
+        <a th:if="${posts.hasPrevious()}" aria-label="이전"
+           th:href="@{${listUrl}(page=${posts.number}, sort=${sort}, searchValue=${param.searchValue}, postType=${searching} ? 'Review' : null)}">‹</a>
+        <a th:each="i : ${#numbers.sequence(1, posts.totalPages)}" th:text="${i}"
+           th:classappend="${posts.number + 1 == i} ? 'active'"
+           th:href="@{${listUrl}(page=${i}, sort=${sort}, searchValue=${param.searchValue}, postType=${searching} ? 'Review' : null)}">1</a>
+        <a th:if="${posts.hasNext()}" aria-label="다음"
+           th:href="@{${listUrl}(page=${posts.number + 2}, sort=${sort}, searchValue=${param.searchValue}, postType=${searching} ? 'Review' : null)}">›</a>
+    </nav>
+</main>
+
+<footer th:replace="~{include/footer :: footer}"></footer>
 </body>
 </html>

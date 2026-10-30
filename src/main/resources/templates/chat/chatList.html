@@ -1,57 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat List</title>
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>채팅 · TRAVELMAKER</title>
     <link rel="stylesheet" th:href="@{/css/chat/chat.css}">
 </head>
-
 <body>
-<div class="header" th:insert="~{include/header :: header}"></div>
+<header th:replace="~{include/header :: header('chat')}"></header>
 
-<div class="container">
-    <div>
-        <p id="title">Chat Rooms</p>
+<main class="page page-medium chat-page">
+    <div class="page-title">
+        <h1>채팅</h1>
+        <p>여행자 프로필에서 1:1 채팅을 시작할 수 있어요.</p>
     </div>
 
-    <div class="chat_box">
-        <ul id="chat_arrange">
-            <li class="chat_div" th:each="room : ${rooms}" th:data-room-id="${room.roomId}">
-                <div class="chat_list" th:with="other=${room.sender.memberId == session.member_id ? room.receiver : room.sender}">
-                    <div class="circle" th:if="${other.profileInfo != null}">
-                        <img th:class="profile" th:src="@{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}}">
+    <div class="card">
+        <ul class="room-list" th:if="${not #lists.isEmpty(rooms)}">
+            <li th:each="room : ${rooms}"
+                th:with="other=${room.sender.memberId == session.member_id ? room.receiver : room.sender}">
+                <a th:href="@{/chat/chatRoom/{id}(id=${room.roomId})}">
+                    <img class="avatar"
+                         th:src="${other.profileInfo != null} ? @{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}} : @{/image/profile.png}"
+                         th:attr="onerror=|this.src='@{/image/profile.png}'|" alt="">
+                    <div class="room-text">
+                        <strong th:text="${other.name}">이름</strong>
+                        <span th:if="${other.profileInfo != null}" th:text="${other.profileInfo.travelType}">ENFP</span>
                     </div>
-                    <div class="circle" th:unless="${other.profileInfo != null}">
-                        <img th:class="profile" th:src="@{/image/profile.png}">
-                    </div>
-                    <div class="list_div">
-                        <span class="name" th:text="${other.name}">username1</span>
-                    </div>
-                </div>
+                    <span class="arrow">›</span>
+                </a>
             </li>
         </ul>
+        <div class="empty" th:if="${#lists.isEmpty(rooms)}">
+            <p>아직 대화가 없어요.</p>
+            <a class="btn btn-primary btn-sm" style="margin-top:16px" th:href="@{/main}">여행자 둘러보기</a>
+        </div>
     </div>
-</div>
+</main>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var chatListElements = document.querySelectorAll('.chat_div');
-        chatListElements.forEach(function(element) {
-            element.addEventListener('click', function() {
-                var roomId = element.getAttribute('data-room-id');
-                if (roomId) { // roomId가 null이 아닌 경우에만 처리
-                    var url = '/chat/chatRoom/' + roomId;
-                    window.location.href = url;
-                } else {
-                    console.error("roomId is null or undefined");
-                }
-            });
-        });
-    });
-
-</script>
+<footer th:replace="~{include/footer :: footer}"></footer>
 </body>
-
 </html>

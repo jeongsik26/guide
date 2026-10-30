@@ -1,0 +1,326 @@
+/* =========================================================
+   TRAVELMAKER 공통 스타일
+   - 폰트: Pretendard (include/head.html 에서 로드)
+   - 글자 크기, 색, 간격은 아래 변수만 사용한다
+   ========================================================= */
+:root {
+    /* 색 */
+    --color-primary: #FF6392;
+    --color-primary-hover: #F04D7F;
+    --color-primary-soft: #FFEEF3;
+    --color-dark: #363636;
+    --color-dark-hover: #1F1F1F;
+    --color-text: #222222;
+    --color-text-sub: #6B6B6B;
+    --color-text-muted: #9A9A9A;
+    --color-border: #E8E8E8;
+    --color-bg: #FAFAFA;
+    --color-surface: #FFFFFF;
+    --color-danger: #E5484D;
+
+    /* 글자 크기 */
+    --fs-xs: 12px;
+    --fs-sm: 14px;
+    --fs-base: 16px;
+    --fs-md: 18px;
+    --fs-lg: 20px;
+    --fs-xl: 24px;
+    --fs-2xl: 32px;
+
+    /* 모양 */
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-full: 999px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+    --content-width: 1080px;
+    --header-height: 64px;
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+/* ---------- 기본 ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    color: var(--color-text);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+}
+
+h1, h2, h3, h4, p { margin: 0; }
+h1 { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: var(--fs-xl); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: var(--fs-md); font-weight: 600; }
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; vertical-align: middle; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* 본문 영역: 푸터를 화면 아래로 밀어낸다 */
+.page {
+    flex: 1;
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+.page-narrow { max-width: 480px; }
+.page-medium { max-width: 720px; }
+
+.page-title { margin-bottom: 24px; }
+.page-title p { margin-top: 6px; color: var(--color-text-sub); font-size: var(--fs-sm); }
+
+/* ---------- 헤더 ---------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid var(--color-border);
+}
+.site-header .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: var(--content-width);
+    height: var(--header-height);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.site-header .logo img { height: 28px; }
+.site-header .gnb { display: flex; gap: 32px; }
+.site-header .gnb a,
+.site-header .util a,
+.site-header .util button {
+    font-size: var(--fs-base);
+    font-weight: 500;
+    color: var(--color-text-sub);
+    transition: color 0.15s;
+}
+.site-header .gnb a:hover,
+.site-header .util a:hover,
+.site-header .util button:hover,
+.site-header .gnb a.active { color: var(--color-primary); }
+.site-header .util { display: flex; align-items: center; gap: 16px; }
+.site-header .util form { margin: 0; }
+.site-header .util button { padding: 0; border: 0; background: none; }
+.site-header .util .signup,
+.site-header .util .signup:hover { color: #FFFFFF; }
+
+/* ---------- 푸터 ---------- */
+.site-footer {
+    margin-top: auto;
+    background: var(--color-dark);
+    color: #BDBDBD;
+    font-size: var(--fs-sm);
+}
+.site-footer .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+.site-footer .brand img { height: 26px; filter: brightness(0) invert(1); opacity: 0.9; }
+.site-footer .brand p { margin-top: 12px; color: #9E9E9E; }
+.site-footer .links { display: flex; gap: 48px; }
+.site-footer .links h4 { margin: 0 0 12px; font-size: var(--fs-sm); font-weight: 600; color: #FFFFFF; }
+.site-footer .links li + li { margin-top: 8px; }
+.site-footer .links a:hover { color: #FFFFFF; }
+.site-footer .bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.site-footer .bottom .inner {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: var(--fs-xs);
+    color: #8A8A8A;
+}
+
+/* ---------- 버튼 ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 44px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.btn-sm { height: 36px; padding: 0 14px; font-size: var(--fs-sm); }
+.btn-lg { height: 52px; padding: 0 28px; font-size: var(--fs-md); }
+.btn-block { width: 100%; }
+.btn-primary { background: var(--color-primary); color: #FFFFFF; }
+.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-dark { background: var(--color-dark); color: #FFFFFF; }
+.btn-dark:hover { background: var(--color-dark-hover); }
+.btn-outline { background: var(--color-surface); border-color: var(--color-border); color: var(--color-text); }
+.btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.btn-ghost { background: transparent; color: var(--color-text-sub); }
+.btn-ghost:hover { background: #F2F2F2; color: var(--color-text); }
+.btn-danger { background: var(--color-surface); border-color: #F3C4C5; color: var(--color-danger); }
+.btn-danger:hover { background: #FFF5F5; }
+
+/* ---------- 입력 ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field + .field { margin-top: 16px; }
+.field > label,
+.label { font-size: var(--fs-sm); font-weight: 600; color: var(--color-text); }
+.field .hint { font-size: var(--fs-xs); color: var(--color-text-muted); }
+.field-row { display: flex; gap: 8px; }
+.field-row > * { flex: 1; min-width: 0; }
+.field-row > .btn { flex: 0 0 auto; }
+
+.input,
+.textarea,
+.select {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    font-size: var(--fs-base);
+    color: var(--color-text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.textarea { height: auto; min-height: 160px; padding: 12px 14px; line-height: 1.6; resize: vertical; }
+.input::placeholder, .textarea::placeholder { color: var(--color-text-muted); }
+.input:focus, .textarea:focus, .select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* ---------- 카드·공통 블록 ---------- */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+.card-body { padding: 24px; }
+
+.alert {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-sm);
+}
+.alert-error { background: #FFF1F1; color: var(--color-danger); }
+.alert-success { background: #EEFBF3; color: #18794E; }
+
+.empty {
+    padding: 64px 20px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--fs-base);
+}
+
+.avatar {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #F0F0F0;
+}
+.avatar-lg { width: 96px; height: 96px; }
+.avatar-xl { width: 128px; height: 128px; }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+}
+.badge-gray { background: #F0F0F0; color: var(--color-text-sub); }
+
+/* 게시판 탭(모집/후기/거래) */
+.tabs { display: flex; gap: 8px; }
+.tabs a {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    color: var(--color-text-sub);
+    transition: background-color 0.15s, color 0.15s;
+}
+.tabs a:hover { background: #F0F0F0; color: var(--color-text); }
+.tabs a.active { background: var(--color-dark); color: #FFFFFF; }
+
+/* 페이지 번호 */
+.pagination { display: flex; justify-content: center; gap: 4px; margin-top: 40px; }
+.pagination a,
+.pagination button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-size: var(--fs-sm);
+    color: var(--color-text-sub);
+}
+.pagination a:hover, .pagination button:hover { background: #F0F0F0; color: var(--color-text); }
+.pagination .active { background: var(--color-primary); color: #FFFFFF; }
+.pagination .active:hover { background: var(--color-primary-hover); color: #FFFFFF; }
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 768px) {
+    :root { --fs-2xl: 26px; --fs-xl: 20px; }
+    .page { padding: 24px 16px 64px; }
+    .site-header .inner { gap: 12px; padding: 0 16px; }
+    .site-header .gnb { gap: 16px; }
+    .site-header .logo img { height: 22px; }
+    .site-footer .inner { padding: 32px 16px; }
+    .site-footer .links { gap: 32px; }
+}
+@media (max-width: 480px) {
+    .site-header .gnb { gap: 12px; }
+    .site-header .gnb a,
+    .site-header .util a,
+    .site-header .util button { font-size: var(--fs-sm); }
+    .site-header .util { gap: 10px; }
+    .site-header .util .signup { display: none; }
+    .site-footer .links { flex-wrap: wrap; gap: 24px 32px; }
+}

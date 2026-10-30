@@ -1,183 +1,60 @@
-body {
-    background-color: #fafafa;
-}
+/* 게시글 글쓰기 (동행 모집 / 여행 후기 / 중고 거래 공통) */
+.write-form { padding: 32px; }
+.write-form .field + .field,
+.write-form .field-row + .field,
+.write-form .field + .field-row { margin-top: 20px; }
+.write-form .field-row > .field { margin-top: 0; }
 
-@font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'BMJUA';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-#container {
-    font-family: 'Pretendard-Regular';
-    background-color: white;
-    width: 480px;
-    margin: 80px auto;
-    padding: 10px 60px 20px;
-    border: black;
-    box-shadow: 3px 3px 10px rgb(205, 205, 205);
-    border-radius: 10px;
-    text-align: center;
-    justify-content: center;
-}
-
-.star_rating {
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    /* 수정 */
-    justify-content: center;
-    /* 추가 */
-    margin-bottom: 10px;
-}
-
+/* 별점 (write.js 가 .star / .on 을 사용) */
+.star_rating { display: flex; gap: 6px; }
 .star_rating .star {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
-    display: inline-block;
-    /* background: url('../board/image/star_1.png') no-repeat; */
-    background: url('../../image/star_1.png') no-repeat;
-    background-size: 100%;
-    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    background: url('../../image/star_1.png') no-repeat center / contain;
     cursor: pointer;
+    transition: transform 0.1s;
 }
+.star_rating .star:hover { transform: scale(1.1); }
+.star_rating .star.on { background-image: url('../../image/star_2.png'); }
 
-.star_rating .star.on {
-    background: url('../../image/star_2.png') no-repeat;
-    background-size: 100%;
-}
-
-input,
-textarea {
-    margin: 10px;
-    width: 85%;
-    border-color: #cccccc;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #F4F4F4;
-    color: #CCCCCC;
-    border: 1px solid #cccccc;
-}
-
-button {
-    background-color: #FF6392;
-    font-family: 'BMJUA';
-    color: white;
-    border: none;
-    border-radius: 30px;
-    margin: 20px;
-    padding: 15px 30px;
-    box-shadow: 3px 3px 8px rgb(205, 205, 205);
-}
-
-button:hover {
-    cursor: pointer;
-    background-color: #FF83A8;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
-}
-
-.my-image-container {
-    position: relative;
+/* 사진 업로드 */
+.upload {
     display: flex;
-    justify-content: center;
     align-items: center;
-    /*height: 100px;*/
+    gap: 16px;
+    padding: 16px;
+    border: 1px dashed #D6D6D6;
+    border-radius: var(--radius);
+    background: #FCFCFC;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
 }
-
-.my-image-container label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.my-image {
-    background-color: #F4F4F4;
-    border: 1px solid #ccc;
-    width: 140px;
-    height: 140px;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
+.upload:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.upload img {
+    width: 96px;
+    height: 96px;
+    padding: 0;
+    border-radius: var(--radius-sm);
     object-fit: cover;
+    background: #F2F2F2;
+}
+.upload-text { font-size: var(--fs-sm); color: var(--color-text-sub); }
+.upload-text small { display: block; font-size: var(--fs-xs); color: var(--color-text-muted); }
+
+/* 지도 */
+.write .map { height: 260px; margin-top: 8px; border-radius: var(--radius); overflow: hidden; background: #F4F4F4; }
+.write .map:empty { height: 0; }
+
+.form-actions {
     display: flex;
-    /* 추가 */
-    justify-content: center;
-    /* 추가 */
-    align-items: center;
-    /* 추가 */
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
 }
 
-#profile-image {
-    width: 120px;
-    height: 120px;
-}
-
-.file-upload-container {
-    /* display: flex;
-    justify-content: space-between;
-    /* 수정
-    align-items: center;
-    추가 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-#select {
-    display: none;
-}
-
-.file-upload-label img {
-    width: 30px;
-    height: 30px;
-}
-
-.ddd {
-    display: flex;
-}
-
-.my-image-container {
-    margin-right: 10px; /* 오른쪽 여백 추가 */
-    flex: 1.5; /* Take 2/3 of the available space */
-}
-
-.travel-plan {
-    flex: 1; /* Take 1/3 of the available space */
-}
-
-
-.travel-plan p {
-    margin-bottom: 10px;
-}
-
-.address-container {
-    display: flex;
-    align-items: center;
-}
-
-.address-container input[type="text"] {
-    flex: 1;
-    margin-right: 5px;
-}
-.input-group {
-    padding-right: 23px;
-    padding-left: 15px;
-    display: flex; /* 입력 필드를 가로로 나란히 배치하기 위해 Flexbox 레이아웃을 사용합니다. */
-}
-
-.input-group input {
-    flex: 1; /* 입력 필드가 동일한 너비를 갖도록 설정합니다. */
-    margin-right: 10px; /* 입력 필드 사이의 간격을 설정합니다. */
-}
-
-.input-group input:last-child {
-    margin-right: 0; /* 마지막 입력 필드의 오른쪽 간격을 제거합니다. */
+@media (max-width: 640px) {
+    .write-form { padding: 20px; }
+    .write .field-row { flex-direction: column; }
 }

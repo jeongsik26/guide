@@ -1,273 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>홈</title>
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>TRAVELMAKER</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div class="container">
-    <header>
-        <div id="imageContainer">
-<!--            <img src="/image/main.webp" id="image1"/>-->
-            <img src="/image/main.png" id="image1"/>
-<!--            <img src="/image/main_pic.webp" id="image2" style="display: none;"/>-->
-            <img src="/image/main_pic.png" id="image2" style="display: none;"/>
+<header th:replace="~{include/header :: header('home')}"></header>
 
-        </div>
-    </header>
-
-    <section id="sec1">
-        <div id="sec11">
-            <a th:href="@{/post/joinMain}">
-                <button style="border: none; background: none; cursor:pointer">
-                    <img src="/image/joinBtn.png"/>
-                </button>
-            </a>
-            <a th:href="@{/post/carrotMain}">
-                <button style="border: none; background: none; cursor:pointer">
-                    <img src="/image/carrotBtn.png"/>
-                </button>
-            </a>
-            <div id="sec11_3">
-                <div id="user">
-                    <div class="img_area" th:if="${session.member_id != null and session.member_profile != null}">
-                        <!--아래 이미지 호출 test RestController 호출 -> imgController로 변경해야하는 내용 -->
-                        <img th:src="'/api/photo/' + ${member_info.profileInfo.uuid + '_' + member_info.profileInfo.fileName}"
-                             alt="Member Photo">
-                    </div>
-
-                    <div class="img_area" th:unless="${session.member_id != null and session.member_profile != null}">
-                        <img src="/image/pf_example.png"/>
-                    </div>
-
-                    <div class="user_info" th:if="${session.member_id != null and session.member_profile != null}">
-                        <div> 안녕하세요 여행자님 &nbsp;: )</div>
-                        <div>
-                            <span class="user_name">[(${member_info.name})]님</span>
-                            &nbsp;| &nbsp;
-                            <span class="user_mbti"> [(${member_info.profileInfo.travelType})]</span>
-                        </div>
-                        <div class="button_area">
-                            <button class="myPageBtn">마이페이지</button>
-                            <form method="post" th:action="@{/member/logout}" style="display: inline;">
-                                <button class="logoutBtn" onclick="sessionStorage.clear()">로그아웃
-                                </button>
-                            </form>
-                        </div>
-
-                    </div>
-
-                    <div class="user_info" th:if="${session.member_id != null and session.member_profile == null}">
-                        <div> 환영합니다 👋</div>
-                        <div>
-                            <span class="user_name">[(${member_info.name})]님 &nbsp;: )</span>
-                        </div>
-                        <div class="button_area">
-                            <button class="profileBtn" style="background-color: #ffcccc">프로필 등록</button>
-                            <form method="post" th:action="@{/member/logout}" style="display: inline;">
-                                <button class="logoutBtn" onclick="sessionStorage.clear()">로그아웃</button>
-                            </form>
-                        </div>
-
-                    </div>
-
-                    <div class="user_info" th:if="${session.member_id == null}">
-                        <div id="notLogin">
-                            <div> 안녕하세요 여행자님 &nbsp;: )</div>
-                            <div class="button_area">
-                                <button class="loginBtn">로그인</button>
-                                <button class="signupBtn">회원가입</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="all_user">
-                    <div id="all_user_title">
-                        <span>🍀 TRAVELMAKER 여행자들</span>
-                    </div>
-                    <div id="all_user_profile" >
-                        <!--                        <div class="profile_area">-->
-                        <!--                            <div class="profile_img_area">-->
-                        <!--                                <img src="/image/pf_example.png" />-->
-                        <!--                            </div>-->
-                        <!--                            <div class="profile_content_area">-->
-                        <!--                                <span>김채림</span>-->
-                        <!--                                <br>-->
-                        <!--                                <span>20/ISFJ</span>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-                    </div>
-                </div>
-            </div>
+<main class="page home">
+    <!-- 배너: 두 장을 번갈아 보여준다 -->
+    <section class="hero">
+        <img class="hero-img is-active" th:src="@{/image/main.png}" alt="세상을 만나는 새로운 방법, 함께 여행을 떠나는 커뮤니티">
+        <img class="hero-img" th:src="@{/image/main_pic.png}" alt="">
+        <div class="hero-dots">
+            <button type="button" class="is-active" aria-label="첫 번째 배너"></button>
+            <button type="button" aria-label="두 번째 배너"></button>
         </div>
     </section>
 
-<!--    <section id="sec2">-->
-<!--        <div>-->
-<!--            <p class="title">✨ 인기 게시물</p>-->
-<!--        </div>-->
-<!--    </section>-->
-</div>
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <section class="home-grid">
+        <a class="menu-card join" th:href="@{/post/joinMain}">
+            <img th:src="@{/image/joinBtn.png}" alt="">
+            <div class="menu-text">
+                <strong>동행 모집</strong>
+                <span>함께 떠날 여행 메이트 찾기</span>
+            </div>
+        </a>
+        <a class="menu-card carrot" th:href="@{/post/carrotMain}">
+            <img th:src="@{/image/carrotBtn.png}" alt="">
+            <div class="menu-text">
+                <strong>중고 거래</strong>
+                <span>여행 용품 사고팔기</span>
+            </div>
+        </a>
+
+        <div class="side">
+            <!-- 내 정보 -->
+            <div class="card user-card">
+                <th:block th:if="${session.member_id != null and member_info != null}">
+                    <img class="avatar avatar-lg"
+                         th:if="${member_info.profileInfo != null}"
+                         th:src="@{'/api/photo/' + ${member_info.profileInfo.uuid + '_' + member_info.profileInfo.fileName}}"
+                         alt="내 프로필 사진">
+                    <img class="avatar avatar-lg" th:unless="${member_info.profileInfo != null}"
+                         th:src="@{/image/pf_example.png}" alt="">
+                    <div class="user-text">
+                        <p class="greeting">안녕하세요 👋</p>
+                        <p class="name">
+                            <strong th:text="${member_info.name}">여행자</strong>님
+                            <span class="badge" th:if="${member_info.profileInfo != null}"
+                                  th:text="${member_info.profileInfo.travelType}">ENFP</span>
+                        </p>
+                        <div class="actions">
+                            <a class="btn btn-primary btn-sm" th:if="${member_info.profileInfo != null}" th:href="@{/member/myPage}">마이페이지</a>
+                            <a class="btn btn-primary btn-sm" th:unless="${member_info.profileInfo != null}" th:href="@{/member/profile}">프로필 등록</a>
+                            <form th:action="@{/member/logout}" method="post">
+                                <button type="submit" class="btn btn-ghost btn-sm">로그아웃</button>
+                            </form>
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:unless="${session.member_id != null and member_info != null}">
+                    <img class="avatar avatar-lg" th:src="@{/image/pf_example.png}" alt="">
+                    <div class="user-text">
+                        <p class="greeting">안녕하세요 여행자님 👋</p>
+                        <p class="sub">로그인하고 여행 메이트를 찾아보세요</p>
+                        <div class="actions">
+                            <a class="btn btn-primary btn-sm" th:href="@{/member/login}">로그인</a>
+                            <a class="btn btn-outline btn-sm" th:href="@{/member/signUp}">회원가입</a>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <!-- 여행자 목록 -->
+            <div class="card travelers">
+                <div class="travelers-head">
+                    <h3>TRAVELMAKER 여행자들</h3>
+                    <span class="count" th:text="${#lists.size(otherMembers)} + '명'">0명</span>
+                </div>
+                <div class="traveler-list" th:if="${not #lists.isEmpty(otherMembers)}">
+                    <a class="traveler" th:each="m : ${otherMembers}"
+                       th:href="@{/member/otherPage/{id}(id=${m.memberId})}">
+                        <img class="avatar"
+                             th:src="@{'/api/photo/' + ${m.profileInfo.uuid + '_' + m.profileInfo.fileName}}"
+                             th:attr="onerror=|this.src='@{/image/pf_example.png}'|" alt="">
+                        <span class="name" th:text="${m.name}">이름</span>
+                        <span class="meta" th:text="|${m.ageRange} · ${m.profileInfo.travelType}|">20대 · ENFP</span>
+                    </a>
+                </div>
+                <p class="empty-text" th:if="${#lists.isEmpty(otherMembers)}">아직 프로필을 등록한 여행자가 없어요.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{include/footer :: footer}"></footer>
+
 <script>
-    var currentImageIndex = 1; // 기본적으로 첫 번째 이미지가 보입니다.
-    function toggleImages() {
-        var image1 = document.getElementById('image1');
-        var image2 = document.getElementById('image2');
+    // 배너 자동 전환(5초)과 점 버튼
+    (function () {
+        var images = document.querySelectorAll('.hero-img');
+        var dots = document.querySelectorAll('.hero-dots button');
+        var current = 0;
 
-        if (currentImageIndex === 1) {
-            // 이미지1이 보이면 이미지2를 보이게 합니다.
-            image1.style.display = 'none';
-            image2.style.display = 'block';
-            currentImageIndex = 2;
-        } else {
-            // 이미지2가 보이면 이미지1을 보이게 합니다.
-            image1.style.display = 'block';
-            image2.style.display = 'none';
-            currentImageIndex = 1;
+        function show(index) {
+            images[current].classList.remove('is-active');
+            dots[current].classList.remove('is-active');
+            current = index;
+            images[current].classList.add('is-active');
+            dots[current].classList.add('is-active');
         }
-    }
 
-    document.getElementById('imageContainer').addEventListener('click', toggleImages);
-</script>
-
-<script>
-    function toggleImages() {
-        var image1 = document.getElementById('image1');
-        var image2 = document.getElementById('image2');
-
-        if (image1.style.display === 'block') {
-            image1.style.display = 'none';
-            image2.style.display = 'block';
-        } else {
-            image1.style.display = 'block';
-            image2.style.display = 'none';
-        }
-    }
-
-    // Call toggleImages function every 5 seconds
-    setInterval(toggleImages, 5000);
-</script>
-
-
-<script th:inline="javascript">
-    var profiles = [];
-
-    var otherMembers = /*[[${otherMembers}]]*/ '';
-
-    // for (var i = 0; i < otherMembers.length; i++) {
-    //     var member = otherMembers[i]
-    //     console.log(member.memberId)
-    //     console.log('나이: ', member.ageRange)
-    //     console.log('이름: ', member.name)
-    //     console.log('mbti: ', member.profileInfo.travelType)
-    //     console.log('사진uuid: ', member.profileInfo.uuid)
-    //     console.log('사진이름: ', member.profileInfo.fileName)
-    // }
-
-    for (var i = 0; i < otherMembers.length; i++) {
-        var member = otherMembers[i]
-        // console.log(member.memberId)
-        // console.log('나이: ', member.ageRange)
-        // console.log('이름: ', member.name)
-        // console.log('mbti: ', member.profileInfo.travelType)
-        // console.log('사진uuid: ', member.profileInfo.uuid)
-        // console.log('사진이름: ', member.profileInfo.fileName)
-        var profile = {
-            memberId: member.memberId,
-            imgSrc: "/api/photo/" + member.profileInfo.uuid + '_' + member.profileInfo.fileName, // 이미지 경로
-            name: member.name, // 이름
-            info: (member.ageRange || '').replace('대', '') + '/' + member.profileInfo.travelType // 정보 조합
-        };
-        profiles.push(profile); // profiles 배열에 추가
-    }
-
-    function generateProfiles(profiles) {
-        var profileContainer = document.getElementById('all_user_profile');
-
-        profiles.forEach(function (profile) {
-            var profileArea = document.createElement('div');
-            profileArea.className = 'profile_area';
-            profileArea.setAttribute('data-memberId', profile.memberId); // memberId를 데이터 속성으로 추가
-
-            var imgArea = document.createElement('div');
-            imgArea.className = 'profile_img_area';
-            var img = document.createElement('img');
-            img.src = profile.imgSrc;
-            imgArea.appendChild(img);
-
-            var contentArea = document.createElement('div');
-            contentArea.className = 'profile_content_area';
-            var name = document.createElement('span');
-            name.textContent = profile.name;
-            var br = document.createElement('br');
-            var info = document.createElement('span');
-            info.textContent = profile.info;
-            contentArea.appendChild(name);
-            contentArea.appendChild(br);
-            contentArea.appendChild(info);
-
-            profileArea.appendChild(imgArea);
-            profileArea.appendChild(contentArea);
-
-            profileContainer.appendChild(profileArea);
-
-            // 프로필 이미지 클릭 시 이벤트 리스너 추가
-            img.addEventListener('click', function () {
-                window.location.href = '/member/otherPage/' + profile.memberId; // memberId에 해당하는 프로필 페이지로 이동
-            });
+        dots.forEach(function (dot, index) {
+            dot.addEventListener('click', function () { show(index); });
         });
-    }
-
-    generateProfiles(profiles);
-
-    $(document).ready(function () {
-        var profileContainer = $('#all_user_profile'); // 프로필 컨테이너
-        var profileWidth = $('.profile_area').outerWidth(true); // 프로필 하나의 너비
-
-        function slideProfiles() {
-            profileContainer.animate({left: '-=' + profileWidth}, 500, function () {
-                profileContainer.append(profileContainer.find('.profile_area:first'));
-                profileContainer.css('left', '0');
-            });
-        }
-
-        // 클릭 이벤트 추가
-        profileContainer.on('click', '.profile_area', function () {
-            var memberId = $(this).data('memberId'); // 클릭된 프로필의 memberId를 가져옴
-            console.log('Clicked member ID:', memberId);
-        });
-
-        setInterval(slideProfiles, 400);
-    });
-
-</script>
-
-<!--메인 페이지 화면이동 스크립트-->
-
-<script>
-    // 로그인 상태에 따라 버튼이 없을 수 있으므로 있는 버튼에만 연결
-    document.addEventListener("DOMContentLoaded", function () {
-        function go(selector, url) {
-            var button = document.querySelector(selector);
-            if (button) {
-                button.addEventListener("click", function () {
-                    window.location.href = url;
-                });
-            }
-        }
-
-        go(".loginBtn", '/member/login');
-        go(".signupBtn", '/member/signUp');
-        go(".myPageBtn", '/member/myPage');
-        go(".profileBtn", '/member/profile');
-    });
+        setInterval(function () { show((current + 1) % images.length); }, 5000);
+    })();
 </script>
 </body>
 </html>

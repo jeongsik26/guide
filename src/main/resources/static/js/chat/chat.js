@@ -7,11 +7,25 @@ stompClient.debug = null;
 
 function appendMessage(message) {
     const chatMessagesDiv = document.getElementById("chat_list");
-    const messageParagraph = document.createElement("span");
+    const mine = String(message.memberId) === String(session_member_id);
 
-    messageParagraph.classList.add(String(message.memberId) === String(session_member_id) ? 'my_msg' : 'other_msg');
-    messageParagraph.textContent = message.memberName + ": " + message.chatMsg;
-    chatMessagesDiv.appendChild(messageParagraph);
+    const row = document.createElement("div");
+    row.className = mine ? 'msg my_msg' : 'msg other_msg';
+
+    // 상대 메시지에만 이름 표시
+    if (!mine) {
+        const name = document.createElement("span");
+        name.className = 'msg-name';
+        name.textContent = message.memberName;
+        row.appendChild(name);
+    }
+
+    const bubble = document.createElement("p");
+    bubble.className = 'bubble';
+    bubble.textContent = message.chatMsg;
+    row.appendChild(bubble);
+
+    chatMessagesDiv.appendChild(row);
     chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
 }
 

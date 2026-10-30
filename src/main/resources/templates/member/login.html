@@ -1,41 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
-    <link rel="stylesheet" th:href="@{/css/member/login.css}">
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>로그인 · TRAVELMAKER</title>
+    <link rel="stylesheet" th:href="@{/css/member/member.css}">
     <script th:src="@{/js/member/login.js}"></script>
 </head>
-
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div class="container">
-    <header>
-        <img th:src="@{/image/logo.png}" alt="로고">
-        <p id="title">로그인을 진행하세요</p>
-    </header>
-    <p class="error" th:if="${param.error != null}" style="color:#e05;text-align:center">아이디 또는 비밀번호가 올바르지 않습니다.</p>
-    <form th:action="@{/member/login}" method="post" onsubmit="return validateForm()">
-        <div>
-            <label for="id"></label>
-            <input type="text" id="id" name="uid" placeholder="아이디">
-        </div>
-        <div>
-            <label for="password"></label>
-            <input type="password" id="password" name="pwd" placeholder="비밀번호">
-        </div>
-        <button type="submit" class="loginBtn">로그인</button>
-    </form>
-    <hr>
-    <div id="signUp">
-        <p>아직 계정이 없으신가요?</p>
-        <a th:href="@{/member/signUp}">회원가입</a>
+<header th:replace="~{include/header :: header('')}"></header>
+
+<main class="page page-narrow auth">
+    <div class="auth-head">
+        <h1>로그인</h1>
+        <p>함께 여행을 떠날 사람들을 만나 보세요.</p>
     </div>
-</div>
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
+
+    <div class="alert alert-error" th:if="${param.error != null}">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+
+    <form class="card card-body" th:action="@{/member/login}" method="post" onsubmit="return validateForm()">
+        <div class="field">
+            <label for="id">아이디</label>
+            <input class="input" type="text" id="id" name="uid" autocomplete="username" placeholder="아이디를 입력하세요">
+        </div>
+        <div class="field">
+            <label for="password">비밀번호</label>
+            <input class="input" type="password" id="password" name="pwd" autocomplete="current-password" placeholder="비밀번호를 입력하세요">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block auth-submit">로그인</button>
+    </form>
+
+    <p class="auth-switch">아직 계정이 없으신가요? <a th:href="@{/member/signUp}">회원가입</a></p>
+</main>
+
+<footer th:replace="~{include/footer :: footer}"></footer>
 </body>
 </html>

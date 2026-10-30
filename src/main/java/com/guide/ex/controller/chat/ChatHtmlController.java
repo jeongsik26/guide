@@ -64,6 +64,13 @@ public class ChatHtmlController {
         model.addAttribute("session_member_id", memberId);
         model.addAttribute("room_id", roomId); // 채팅방 ID를 모델에 추가
 
+        // 화면 상단에 보여줄 대화 상대
+        chatService.memberChatRooms(memberId).stream()
+                .filter(room -> roomId.equals(room.getRoomId()))
+                .findFirst()
+                .map(room -> memberId.equals(room.getSenderId()) ? room.getReceiver() : room.getSender())
+                .ifPresent(other -> model.addAttribute("other", other));
+
         return "chat/chatRoom"; // chatRoom.html 페이지 반환
     }
 }

@@ -1,59 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
-<!-- 공통 헤더: th:insert="~{include/header :: header}" -->
-<th:block th:fragment="header">
-<link rel="stylesheet" th:href="@{/css/header.css}">
-    <header id="header">
-        <ul id="list">
-            <div class="left-group">
-                <li id="travelmaker">
-                    <a class="a-link" th:href="@{/main}" target="_parent"><img th:src="@{/image/logo.png}" alt="TRAVELMAKER"></a>
-                </li>
-            </div>
-            <div class="center-group">
-                <li>
-                    <a class="a-link" th:href="@{/main}" target="_parent">홈</a>
-                </li>
-                <li id="community">
-                    <a class="a-link" th:href="@{/post/joinMain}" target="_parent">커뮤니티</a>
-                </li>
-                <li id="chat">
-                    <a class="a-link" th:href="@{/chat/chatList}" target="_parent">채팅</a>
-                </li>
-            </div>
-
-        <div class="right-group" th:if="${session.member_id != null}">
-            <form id="logoutForm" method="post" th:action="@{/member/logout}">
-                <li id="mypage">
-                    <a class="a-link" th:href="@{/member/myPage}" target="_parent">마이페이지</a>
-                </li>
-                <li id="logout" onclick="logout()">
-                    <a class="a-link" href="#">로그아웃</a>
-                </li>
-
+<!-- 공통 헤더: th:replace="~{include/header :: header('home' | 'community' | 'chat' | '')}" -->
+<header class="site-header" th:fragment="header(menu)">
+    <div class="inner">
+        <a class="logo" th:href="@{/main}">
+            <img th:src="@{/image/logo.png}" alt="TRAVELMAKER">
+        </a>
+        <nav class="gnb">
+            <a th:href="@{/main}" th:classappend="${menu == 'home'} ? 'active'">홈</a>
+            <a th:href="@{/post/joinMain}" th:classappend="${menu == 'community'} ? 'active'">커뮤니티</a>
+            <a th:href="@{/chat/chatList}" th:classappend="${menu == 'chat'} ? 'active'">채팅</a>
+        </nav>
+        <div class="util" th:if="${session.member_id != null}">
+            <a th:href="@{/member/myPage}">마이페이지</a>
+            <form th:action="@{/member/logout}" method="post">
+                <button type="submit">로그아웃</button>
             </form>
         </div>
-        <div class="right-group" th:unless="${session.member_id != null}">
-            <li id="login">
-                <a class="a-link" href="/member/login" target="_parent">로그인</a>
-            </li>
-            <li id="block">
-                |
-            </li>
-            <li id="signUp">
-                <a class="a-link" href="/member/signUp" target="_parent">회원가입</a>
-            </li>
+        <div class="util" th:unless="${session.member_id != null}">
+            <a th:href="@{/member/login}">로그인</a>
+            <a class="btn btn-primary btn-sm signup" th:href="@{/member/signUp}">회원가입</a>
         </div>
-    </ul>
+    </div>
 </header>
-
-<script>
-    function logout() {
-        sessionStorage.clear();
-        document.getElementById('logoutForm').submit();
-    }
-</script>
-</th:block>
 </body>
 </html>

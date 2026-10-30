@@ -1,72 +1,69 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>당근 등록</title>
+    <th:block th:replace="~{include/head :: common}"></th:block>
+    <title>중고 거래 글쓰기 · TRAVELMAKER</title>
     <link rel="stylesheet" th:href="@{/css/post/write.css}">
-    <style th:inline="css">
-        .goods-img {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .my-image{
-            margin-top: 10px;
-            width: 85%;
-            height: 200px;
-        }
-        #profile-image {
-            width: 180px;
-            height: 180px;
-        }
-    </style>
 </head>
 <body>
-<div th:insert="~{include/header :: header}"></div>
-<div id="container">
-    <form th:action="@{/post/carrotWrite}" method="post" enctype="multipart/form-data">
-        <h1>당근 마켓</h1>
-        <input name="title" type="text" required maxlength="100" placeholder="제목을 입력하세요"> <br>
-        <input name="price" type="number" min="0" required placeholder="판매 가격을 입력하세요"><br>
-        <textarea name="content" required cols="40" rows="4" placeholder="내용을 입력하세요"></textarea> <br><br>
+<header th:replace="~{include/header :: header('community')}"></header>
+
+<main class="page page-medium write">
+    <div class="page-title">
+        <h1>중고 거래 글쓰기</h1>
+        <p>필요 없어진 여행 용품을 판매해 보세요.</p>
+    </div>
+
+    <form class="card card-body write-form" th:action="@{/post/carrotWrite}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="postType" value="Carrot">
-        <label>사진 첨부</label>
-        <div class="goods-img">
-            <div class="my-image">
-                <label for="select" class="file-upload-label">
-                    <img id="profile-image" th:src="@{/image/camera.png}" alt="프로필이미지">
-                </label>
-                <div class="file-upload-container">
-                    <input id="select" type="file" accept="image/*" name="file"
-                           onchange='handleImageUpload(event)'/>
-                </div>
+
+        <div class="field">
+            <label for="title">제목</label>
+            <input class="input" id="title" name="title" type="text" required maxlength="100" placeholder="제목을 입력하세요">
+        </div>
+        <div class="field">
+            <label for="price">판매 가격(원)</label>
+            <input class="input" id="price" name="price" type="number" min="0" required placeholder="예) 10000">
+        </div>
+
+        <div class="field">
+            <label for="content">내용</label>
+            <textarea class="textarea" id="content" name="content" required placeholder="상품 상태, 구매 시기, 거래 방법 등을 적어 주세요."></textarea>
+        </div>
+
+        <div class="field">
+            <span class="label">사진</span>
+            <label class="upload" for="select">
+                <img id="profile-image" th:src="@{/image/camera.png}" alt="">
+                <span class="upload-text">클릭해서 사진 추가 <small>(선택, 10MB 이하)</small></span>
+            </label>
+            <input id="select" type="file" name="file" accept="image/*" onchange="handleImageUpload(event)" hidden>
+        </div>
+
+        <div class="field">
+            <label for="sample6_address">거래 장소</label>
+            <div class="field-row">
+                <input class="input" type="text" id="sample6_address" placeholder="주소 검색 버튼을 눌러 주세요" readonly>
+                <button class="btn btn-outline" type="button" onclick="sample6_execDaumPostcode()">주소 검색</button>
             </div>
+            <input type="hidden" name="locationX" id="sample6_latitude" value="">
+            <input type="hidden" name="locationY" id="sample6_longitude" value="">
+            <div id="map" class="map"></div>
         </div>
 
-        <div class="address-container">
-            <input type="text" name="road_address" id="sample6_address" placeholder="거래 장소">
-            <button class="btn btn-sm btn-primary" type="button" onclick="sample6_execDaumPostcode()">검색</button>
+        <div class="form-actions">
+            <a class="btn btn-ghost" th:href="@{/post/carrotMain}">취소</a>
+            <button type="submit" class="btn btn-primary">등록하기</button>
         </div>
-        <input type="hidden" name="locationX" id="sample6_latitude" th:value="${latitude}">
-        <input type="hidden" name="locationY" id="sample6_longitude" th:value="${longitude}">
-
-        <div id="map" style="width:500px;height:350px;"></div>
-
-        <button type="submit">글쓰기 완료</button>
     </form>
-</div>
+</main>
 
-<script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+<footer th:replace="~{include/footer :: footer}"></footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script th:src="@{/js/post/write.js}"></script>
-
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f982e13e4f6fb5fa544e2ca4883ced76&libraries=services"></script>
 <script th:src="@{/js/post/mepFindLocCloser.js}"></script>
-<footer>
-    <div th:insert="~{include/footer :: footer}"></div>
-</footer>
 </body>
-
 </html>
