@@ -5,7 +5,8 @@
 <header class="site-header" th:fragment="header(menu)">
     <div class="inner">
         <a class="logo" th:href="@{/}">
-            <img th:src="@{/image/logo.png}" alt="TRAVELMAKER">
+            <img class="logo-mark" th:src="@{/image/logo-mark.svg}" alt="">
+            <span class="logo-text">TRAVEL<em>MAKER</em></span>
         </a>
         <nav class="gnb">
             <a th:href="@{/}" th:classappend="${menu == 'home'} ? 'active'">홈</a>

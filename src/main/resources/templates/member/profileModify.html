@@ -18,7 +18,7 @@
           onsubmit="return checkTravelType()">
         <div class="photo-field">
             <label class="photo" for="file">
-                <img id="previewImage" th:src="${member != null and member.profileInfo != null} ? @{'/api/photo/' + ${member.profileInfo.uuid + '_' + member.profileInfo.fileName}} : @{/image/pf_example.png}" alt="프로필 사진">
+                <img id="previewImage" th:src="${member != null and member.profileInfo != null} ? @{'/api/photo/' + ${member.profileInfo.uuid + '_' + member.profileInfo.fileName}} : @{/image/pf_example.svg}" alt="프로필 사진">
                 <span class="photo-edit">변경</span>
             </label>
             <input type="file" id="file" name="file" accept="image/*" hidden>

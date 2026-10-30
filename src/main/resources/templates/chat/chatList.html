@@ -20,8 +20,8 @@
                 th:with="other=${room.sender.memberId == session.member_id ? room.receiver : room.sender}">
                 <a th:href="@{/chat/chatRoom/{id}(id=${room.roomId})}">
                     <img class="avatar"
-                         th:src="${other.profileInfo != null} ? @{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}} : @{/image/profile.png}"
-                         th:attr="onerror=|this.src='@{/image/profile.png}'|" alt="">
+                         th:src="${other.profileInfo != null} ? @{'/api/photo/' + ${other.profileInfo.uuid + '_' + other.profileInfo.fileName}} : @{/image/profile.svg}"
+                         th:attr="onerror=|this.src='@{/image/profile.svg}'|" alt="">
                     <div class="room-text">
                         <strong th:text="${other.name}">이름</strong>
                         <span th:if="${other.profileInfo != null}" th:text="${other.profileInfo.travelType}">ENFP</span>

@@ -12,8 +12,8 @@
     <div class="mypage-grid">
         <aside class="card profile-card">
             <img class="avatar avatar-xl"
-                 th:src="${profile != null} ? @{'/api/photo/' + ${profile.uuid + '_' + profile.fileName}} : @{/image/user.png}"
-                 th:attr="onerror=|this.src='@{/image/user.png}'|" alt="프로필 사진">
+                 th:src="${profile != null} ? @{'/api/photo/' + ${profile.uuid + '_' + profile.fileName}} : @{/image/user.svg}"
+                 th:attr="onerror=|this.src='@{/image/user.svg}'|" alt="프로필 사진">
             <h1 class="name" th:text="${member.name}">이름</h1>
             <p class="sub">[[${member.ageRange}]] · [[${member.genderDescription}]]</p>
             <span class="badge" th:if="${profile != null}" th:text="${profile.travelType}">ENFP</span>

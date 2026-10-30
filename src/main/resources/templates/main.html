@@ -21,14 +21,14 @@
 
     <section class="home-grid">
         <a class="menu-card join" th:href="@{/post/joinMain}">
-            <img th:src="@{/image/joinBtn.png}" alt="">
+            <img class="illust" th:src="@{/image/join-illust.png}" alt="">
             <div class="menu-text">
                 <strong>동행 모집</strong>
                 <span>함께 떠날 여행 메이트 찾기</span>
             </div>
         </a>
         <a class="menu-card carrot" th:href="@{/post/carrotMain}">
-            <img th:src="@{/image/carrotBtn.png}" alt="">
+            <img class="illust" th:src="@{/image/carrot-illust.png}" alt="">
             <div class="menu-text">
                 <strong>중고 거래</strong>
                 <span>여행 용품 사고팔기</span>
@@ -44,7 +44,7 @@
                          th:src="@{'/api/photo/' + ${member_info.profileInfo.uuid + '_' + member_info.profileInfo.fileName}}"
                          alt="내 프로필 사진">
                     <img class="avatar avatar-lg" th:unless="${member_info.profileInfo != null}"
-                         th:src="@{/image/pf_example.png}" alt="">
+                         th:src="@{/image/pf_example.svg}" alt="">
                     <div class="user-text">
                         <p class="greeting">안녕하세요 👋</p>
                         <p class="name">
@@ -62,7 +62,7 @@
                     </div>
                 </th:block>
                 <th:block th:unless="${session.member_id != null and member_info != null}">
-                    <img class="avatar avatar-lg" th:src="@{/image/pf_example.png}" alt="">
+                    <img class="avatar avatar-lg" th:src="@{/image/pf_example.svg}" alt="">
                     <div class="user-text">
                         <p class="greeting">안녕하세요 여행자님 👋</p>
                         <p class="sub">로그인하고 여행 메이트를 찾아보세요</p>
@@ -87,7 +87,7 @@
                            th:href="@{/member/otherPage/{id}(id=${m.memberId})}">
                             <img class="avatar"
                                  th:src="@{'/api/photo/' + ${m.profileInfo.uuid + '_' + m.profileInfo.fileName}}"
-                                 th:attr="onerror=|this.src='@{/image/pf_example.png}'|" alt="">
+                                 th:attr="onerror=|this.src='@{/image/pf_example.svg}'|" alt="">
                             <span class="name" th:text="${m.name}">이름</span>
                             <span class="meta" th:text="|${m.ageRange} · ${m.profileInfo.travelType}|">20대 · ENFP</span>
                         </a>
