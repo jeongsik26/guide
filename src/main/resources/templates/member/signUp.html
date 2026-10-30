@@ -37,13 +37,33 @@
             <input class="input" type="password" id="check" name="check" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력하세요">
         </div>
         <div class="field">
-            <label for="phone">휴대폰 번호</label>
-            <input class="input" type="tel" id="phone" name="phone" placeholder="01012345678">
+            <label for="phone1">휴대폰 번호</label>
+            <div class="phone-row">
+                <select class="select" id="phone1" aria-label="휴대폰 앞자리">
+                    <option value="010" selected>010</option>
+                    <option value="011">011</option>
+                    <option value="016">016</option>
+                    <option value="017">017</option>
+                    <option value="018">018</option>
+                    <option value="019">019</option>
+                </select>
+                <span class="dash">-</span>
+                <input class="input" type="tel" id="phone2" inputmode="numeric" maxlength="4" placeholder="1234" aria-label="휴대폰 가운데 자리">
+                <span class="dash">-</span>
+                <input class="input" type="tel" id="phone3" inputmode="numeric" maxlength="4" placeholder="5678" aria-label="휴대폰 끝자리">
+            </div>
+            <!-- 세 칸을 합친 값(01012345678)을 서버로 보낸다 -->
+            <input type="hidden" id="phone" name="phone">
         </div>
         <div class="field-row">
-            <div class="field">
+            <div class="field"
+                 th:with="thisYear=${#temporals.year(#temporals.createNow())}">
                 <label for="year">출생 연도</label>
-                <input class="input" type="number" id="year" name="year" value="1999" min="1900">
+                <select class="select" id="year" name="year">
+                    <option value="" selected disabled>연도 선택</option>
+                    <option th:each="y : ${#numbers.sequence(thisYear - 14, thisYear - 100, -1)}"
+                            th:value="${y}" th:text="|${y}년|">2000년</option>
+                </select>
             </div>
             <div class="field">
                 <span class="label">성별</span>

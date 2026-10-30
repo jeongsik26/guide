@@ -11,6 +11,12 @@
 .auth-switch { margin-top: 20px; text-align: center; font-size: var(--fs-sm); color: var(--color-text-sub); }
 .auth-switch a { margin-left: 4px; font-weight: 600; color: var(--color-primary); }
 
+/* 휴대폰 번호 (앞자리 select + 두 칸) */
+.phone-row { display: flex; align-items: center; gap: 6px; }
+.phone-row .select { flex: 0 0 96px; }
+.phone-row .input { flex: 1; min-width: 0; text-align: center; letter-spacing: 1px; }
+.phone-row .dash { color: var(--color-text-muted); }
+
 /* 성별 선택 */
 .segmented {
     display: flex;
