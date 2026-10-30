@@ -51,6 +51,22 @@
 - Swagger UI: http://localhost:8888/swagger-ui/index.html
 - 업로드 이미지는 `./upload` 폴더에 저장됩니다(`GUIDE_UPLOAD_PATH` 환경변수로 변경 가능).
 
+### 서버 배포(/opt/guide)
+
+서버의 `/opt/guide` 는 이 저장소(develop)를 클론한 폴더입니다. 실행 설정은 Git에 올리지 않는 `/opt/guide/guide.env`(DB·HTTPS 인증서 비밀번호, 권한 600)에 있습니다.
+
+```bash
+cd /opt/guide
+git pull
+./gradlew clean build
+./shutdown.sh
+./start.sh
+```
+
+- `start.sh`: `build/libs` 의 jar 를 백그라운드로 실행하고 로그(`nohup.out`)를 보여줍니다. `Ctrl+C` 로 로그 보기만 빠져나오며 앱은 계속 실행됩니다.
+- `shutdown.sh`: 정상 종료를 기다리고, 30초 안에 안 꺼지면 강제 종료합니다.
+- 접속: `https://<서버IP>:8888/main` (자체 서명 인증서 `ssl.p12`)
+
 ### MySQL(운영) 실행
 
 DB 접속 정보는 소스에 넣지 않고 환경변수로 전달합니다.

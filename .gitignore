@@ -39,3 +39,11 @@ out/
 ### Local runtime ###
 /data/
 /upload/
+
+### Server runtime ###
+nohup.out
+pid.file
+*.p12
+guide.env
+guide.jar*
+guide.service
