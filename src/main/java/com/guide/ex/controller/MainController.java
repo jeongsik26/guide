@@ -17,9 +17,10 @@ public class MainController {
     @Autowired
     private MemberService memberService;
 
-    @GetMapping("/include/header")
-    public void header() {
-
+    // 도메인만 입력하고 들어오면 메인으로
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/main";
     }
 
     @GetMapping("/main")

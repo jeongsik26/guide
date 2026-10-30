@@ -1,0 +1,123 @@
+# =========================================================
+# guide 설정 (공통 + 프로필별 설정을 '---' 로 구분)
+# - local : 로컬 개발용 H2 파일 DB (기본값)
+# - mysql : 운영 MySQL. 서버의 /opt/guide/guide.env 에서 SPRING_PROFILES_ACTIVE=mysql
+# - test  : 테스트(./gradlew test) 전용 인메모리 H2
+# 비밀번호·인증서 정보는 이 파일에 넣지 않고 환경변수(GUIDE_*)로 받는다
+# =========================================================
+
+spring:
+  application:
+    name: guide
+  profiles:
+    default: local
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        # 연관 컬렉션(이미지 등) N+1 완화
+        default_batch_fetch_size: 100
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+
+server:
+  port: ${GUIDE_PORT:8888}
+
+  # HTTPS(내장 Tomcat SSL). 운영 서버는 guide.env 에서 GUIDE_SSL_ENABLED=true 와 인증서 정보를 준다
+  ssl:
+    enabled: ${GUIDE_SSL_ENABLED:false}
+    key-store: ${GUIDE_SSL_KEY_STORE:file:./ssl.p12}
+    key-store-type: PKCS12
+    key-store-password: ${GUIDE_SSL_KEY_STORE_PASSWORD:}
+    key-alias: ${GUIDE_SSL_KEY_ALIAS:guide}
+
+  servlet:
+    session:
+      # 세션 ID를 URL(;jsessionid=)에 붙이지 않고 쿠키로만 유지
+      tracking-modes: cookie
+      cookie:
+        # HTTPS 일 때 세션 쿠키를 HTTPS 로만 전송
+        secure: ${GUIDE_SSL_ENABLED:false}
+        http-only: true
+
+  # 에러 응답에 스택트레이스 노출 금지(devtools 기본값 덮어쓰기)
+  error:
+    include-stacktrace: never
+    include-message: never
+
+logging:
+  level:
+    org.springframework: info
+    com.guide: debug
+
+com:
+  guide:
+    upload:
+      # 업로드 사진 저장 위치 (기본값: 실행 위치의 upload 폴더)
+      path: ${GUIDE_UPLOAD_PATH:./upload}
+
+---
+# 로컬 개발용 H2 파일 DB (MySQL 호환 모드)
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: "jdbc:h2:file:./data/guidedb;MODE=MySQL;DATABASE_TO_LOWER=TRUE;NON_KEYWORDS=YEAR,VALUE,USER"
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+---
+# 운영 MySQL. 접속 정보는 환경변수로 주입
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "${GUIDE_DB_URL:jdbc:mysql://localhost:3306/guidedb?characterEncoding=UTF-8&serverTimezone=Asia/Seoul}"
+    username: ${GUIDE_DB_USERNAME:guide}
+    password: ${GUIDE_DB_PASSWORD:}
+  thymeleaf:
+    cache: true
+
+# 운영 로그: SQL/디버그 로그 줄이기
+logging:
+  level:
+    com.guide: info
+
+---
+# 테스트 전용 인메모리 DB (로컬 개발 DB를 건드리지 않음)
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: "jdbc:h2:mem:guidetest;MODE=MySQL;DATABASE_TO_LOWER=TRUE;NON_KEYWORDS=YEAR,VALUE,USER;DB_CLOSE_DELAY=-1"
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+com:
+  guide:
+    upload:
+      path: build/test-upload
