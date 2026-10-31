@@ -5,7 +5,8 @@
 .auth-head { margin-bottom: 24px; text-align: center; }
 .auth-head p { margin-top: 8px; color: var(--color-text-sub); }
 .auth .card-body { padding: 28px; }
-.auth .field-row { margin-top: 16px; }
+/* 폼 바로 아래 줄(출생 연도·성별)만 위 간격. 필드 안의 줄(아이디+중복확인)은 제외 */
+.auth form > .field-row { margin-top: 16px; }
 .auth .field-row > .field { margin-top: 0; }
 .auth-submit { margin-top: 20px; }
 
@@ -88,7 +89,8 @@
 .hint { font-size: var(--fs-xs); color: var(--color-text-muted); }
 
 /* 여행 유형 선택 (mbti.js 가 .select / .selectBtn / .selected 를 사용) */
-.select { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+/* 여행 유형 묶음(div). 폼의 select box(.select)와 이름이 같아 div 로 한정 */
+div.select { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .selectBtn {
     height: 48px;
     border: 1px solid var(--color-border);
